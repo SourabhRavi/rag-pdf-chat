@@ -1,12 +1,21 @@
 const express = require("express");
 const multer = require("multer");
 const pdfParse = require("pdf-parse");
+const { randomUUID } = require("crypto");
 const fs = require("fs");
 const { GoogleGenAI } = require("@google/genai");
 const { QdrantClient } = require("@qdrant/js-client-rest");
+const cors = require("cors");
 require("dotenv").config();
 
 const app = express();
+app.use(express.json());
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL,
+    credentials: true,
+  }),
+);
 
 const upload = multer({ dest: "uploads/" });
 
@@ -28,15 +37,6 @@ const qdrantClient = new QdrantClient({
   apiKey: process.env.QDRANT_API_KEY,
 });
 
-// const cosineSimilarity = (vecA, vecB) => {
-//   let dotProduct = 0;
-//   for (let i = 0; i < vecA.length; i++) {
-//     dotProduct += vecA[i] * vecB[i];
-//   }
-
-//   return dotProduct;
-// };
-
 app.get("/", (req, res) => {
   res.send("Hey I am Sourabh");
 });
@@ -57,15 +57,14 @@ app.get("/create-collection", async (req, res) => {
 });
 
 app.post("/upload", upload.single("pdf"), async (req, res) => {
-  console.log(req.body);
-
   try {
     const dataBuffer = fs.readFileSync(req.file.path);
     const pdfData = await pdfParse(dataBuffer);
     const text = pdfData.text;
 
     const chunks = text.split("\n\n").filter((chunk) => chunk.trim() !== "");
-    // console.log(chunks);
+
+    const documentId = randomUUID();
 
     const chunkEmbeddings = [];
 
@@ -77,10 +76,12 @@ app.post("/upload", upload.single("pdf"), async (req, res) => {
       });
     }
 
-    const points = chunkEmbeddings.map((item, index) => ({
-      id: index + 1,
+    const points = chunkEmbeddings.map((item) => ({
+      id: randomUUID(),
       vector: item.embedding,
       payload: {
+        documentId,
+        fileName: req.file.originalname,
         text: item.text,
       },
     }));
@@ -89,43 +90,65 @@ app.post("/upload", upload.single("pdf"), async (req, res) => {
       points,
     });
 
-    const question = req.body.question;
+    return res.status(200).json({
+      success: true,
+      message: "PDF uploaded successfully",
+      data: {
+        documentId,
+        fileName: req.file.originalname,
+      },
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      success: false,
+      message: "File upload failed. Please retry in sometime.",
+    });
+  }
+});
+
+app.post("/chat", async (req, res) => {
+  try {
+    const { documentId, question } = req.body;
     const questionEmbedding = await createEmbedding(question);
     let bestChunk = null;
+
+    // const searchResult = await qdrantClient.query("pdf-docs", {
+    //   query: questionEmbedding,
+    //   limit: 1,
+    //   with_payload: true,
+    // });
 
     const searchResult = await qdrantClient.query("pdf-docs", {
       query: questionEmbedding,
       limit: 1,
       with_payload: true,
+      filter: {
+        must: [
+          {
+            key: "documentId",
+            match: {
+              value: documentId,
+            },
+          },
+        ],
+      },
     });
 
-    // console.log("Search result", searchResult);
-    console.dir(searchResult, { depth: null });
     bestChunk = searchResult.points[0].payload.text;
-
-    // let bestScore = -Infinity;
-
-    // for (const items of chunkEmbeddings) {
-    //   const score = cosineSimilarity(questionEmbedding, items.embedding);
-
-    //   if (score > bestScore) {
-    //     bestChunk = items.text;
-    //     bestScore = score;
-    //   }
-    // }
-
-    // console.log("best score", bestScore);
-    // console.log("best chunk", bestChunk);
 
     const response = await ai.models.generateContent({
       model: "gemini-3.5-flash-lite",
       contents: `Explain the question using the context: ${bestChunk} and question is: ${question}`,
     });
 
-    res.send(response.text);
+    res.status(200).json({
+      success: true,
+      message: response.text,
+    });
   } catch (err) {
-    console.log(err);
-    res.status(500).send(err);
+    console.error(err);
+    res.status(500).json(err);
   }
 });
 
