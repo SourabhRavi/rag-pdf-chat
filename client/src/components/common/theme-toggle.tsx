@@ -1,5 +1,5 @@
+import { Button } from "@/components/ui/button";
 import { useTheme } from "@/hooks/useTheme";
-import { Button } from "@base-ui/react";
 import { Moon, Sun } from "lucide-react";
 
 const ThemeToggle = () => {
