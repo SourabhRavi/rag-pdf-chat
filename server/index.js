@@ -147,15 +147,27 @@ app.post("/chat", async (req, res) => {
 
     bestChunk = searchResult.points[0].payload.text;
 
-    const response = await ai.models.generateContent({
+    // for full content after generation
+    // const response = await ai.models.generateContent({
+    //   model: "gemini-3.5-flash-lite",
+    //   contents: `Explain the question using the context: ${bestChunk} and question is: ${question}`,
+    // });
+
+    // for content streaming
+    const responseStream = await ai.models.generateContentStream({
       model: "gemini-3.5-flash-lite",
       contents: `Explain the question using the context: ${bestChunk} and question is: ${question}`,
     });
 
-    res.status(200).json({
-      success: true,
-      message: response.text,
-    });
+    res.setHeader("Content-Type", "text/plain; charset=utf-8");
+    res.setHeader("Transfer-Encoding", "chunked");
+
+    for await (const chunk of responseStream) {
+      // console.log(chunk.text);
+      res.write(chunk.text);
+    }
+
+    res.end();
   } catch (err) {
     console.error(err);
     res.status(500).json(err);
