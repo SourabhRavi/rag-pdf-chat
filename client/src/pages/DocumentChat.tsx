@@ -41,12 +41,10 @@ const DocumentChat = () => {
     try {
       setIsLoading(true);
 
-      const response = await api.post("/chat", {
-        documentId,
-        question,
-      });
-
-      const { data } = response;
+      // const response = await api.post("/chat", {
+      //   documentId,
+      //   question,
+      // });
 
       setMessages((prev) => [
         ...prev,
@@ -54,15 +52,61 @@ const DocumentChat = () => {
           role: "user",
           content: question,
         },
-        {
-          role: "assistant",
-          content: data.message,
-        },
       ]);
 
-      setQuestion("");
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/chat`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          documentId,
+          question,
+        }),
+      });
 
-      console.log("CHAT RESPONSE:", response.data);
+      if (!response.ok || !response.body) {
+        throw new Error("Failed to stream response");
+      }
+
+      const reader = response.body.getReader();
+
+      let assistantMessage = "";
+
+      const decoder = new TextDecoder();
+
+      while (true) {
+        const { value, done } = await reader.read();
+
+        if (done) break;
+
+        const chunk = decoder.decode(value, { stream: true });
+
+        assistantMessage += chunk;
+
+        setMessages((prev) => {
+          const lastIndex = prev.length - 1;
+
+          if (prev[lastIndex]?.role !== "assistant") {
+            return [
+              ...prev,
+              {
+                role: "assistant",
+                content: assistantMessage,
+              },
+            ];
+          }
+
+          const updatedMessages = [...prev];
+
+          updatedMessages[lastIndex] = {
+            ...updatedMessages[lastIndex],
+            content: assistantMessage,
+          };
+
+          return updatedMessages;
+        });
+      }
+
+      setQuestion("");
     } catch (err) {
       console.error(err);
     } finally {
