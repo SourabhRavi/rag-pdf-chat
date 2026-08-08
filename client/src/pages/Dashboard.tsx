@@ -13,7 +13,7 @@ const Dashboard = () => {
   const handleChatNavigation = () => {
     if (!selectedDocument) return;
 
-    navigate("/chat", {
+    navigate(`/document/${selectedDocument.documentId}`, {
       state: selectedDocument,
     });
   };
