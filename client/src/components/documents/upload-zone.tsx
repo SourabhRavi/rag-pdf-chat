@@ -5,9 +5,10 @@ import { useRef, useState, type ChangeEvent } from "react";
 
 type UploadZoneProps = {
   onUploadSuccess: (document: UploadResponse) => void;
+  onFileSelect: () => void;
 };
 
-const UploadZone = ({ onUploadSuccess }: UploadZoneProps) => {
+const UploadZone = ({ onUploadSuccess, onFileSelect }: UploadZoneProps) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const handleFileSelect = (event: ChangeEvent<HTMLInputElement>) => {
@@ -15,6 +16,7 @@ const UploadZone = ({ onUploadSuccess }: UploadZoneProps) => {
 
     if (!file) return;
     setSelectedFile(file);
+    onFileSelect();
   };
 
   const handleUpload = async () => {

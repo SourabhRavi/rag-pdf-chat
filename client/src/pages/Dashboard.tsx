@@ -18,13 +18,17 @@ const Dashboard = () => {
     });
   };
 
+  const handleFileSelect = () => {
+    setSelectedDocument(null);
+  };
+
   return (
     <DashboardLayout>
       {/* Stats */}
       {/* Recent PDFs */}
       {/* Recent Chats */}
       {/* Analytics */}
-      <UploadZone onUploadSuccess={setSelectedDocument} />
+      <UploadZone onUploadSuccess={setSelectedDocument} onFileSelect={handleFileSelect} />
 
       {selectedDocument && (
         <div>
