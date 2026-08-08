@@ -158,7 +158,7 @@ app.get("/document/:documentId", async (req, res) => {
   try {
     const { documentId } = req.params;
 
-    const document = await Document.findOne({ documentId });
+    const document = await Document.findOne({ documentId }).lean();
 
     if (!document) {
       res.status(404).json({
@@ -170,9 +170,7 @@ app.get("/document/:documentId", async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "Document found.",
-      data: {
-        ...document,
-      },
+      data: document,
     });
   } catch (err) {
     console.error(err);
