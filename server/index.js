@@ -7,6 +7,9 @@ const { GoogleGenAI } = require("@google/genai");
 const { QdrantClient } = require("@qdrant/js-client-rest");
 const cors = require("cors");
 require("dotenv").config();
+const Document = require("./models/document.model");
+
+const connectDB = require("./config/db");
 
 const app = express();
 app.use(express.json());
@@ -90,6 +93,11 @@ app.post("/upload", upload.single("pdf"), async (req, res) => {
       points,
     });
 
+    await Document.create({
+      documentId,
+      fileName: req.file.originalname,
+    });
+
     return res.status(200).json({
       success: true,
       message: "PDF uploaded successfully",
@@ -112,12 +120,6 @@ app.post("/chat", async (req, res) => {
     const { documentId, question } = req.body;
     const questionEmbedding = await createEmbedding(question);
     let bestChunk = null;
-
-    // const searchResult = await qdrantClient.query("pdf-docs", {
-    //   query: questionEmbedding,
-    //   limit: 1,
-    //   with_payload: true,
-    // });
 
     const searchResult = await qdrantClient.query("pdf-docs", {
       query: questionEmbedding,
@@ -152,6 +154,12 @@ app.post("/chat", async (req, res) => {
   }
 });
 
-app.listen(3000, () => {
-  console.log("Server is running on port 3000");
-});
+const startServer = async () => {
+  await connectDB();
+
+  app.listen(3000, () => {
+    console.log("Server is running on port 3000");
+  });
+};
+
+startServer();
