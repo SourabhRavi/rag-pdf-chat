@@ -53,7 +53,15 @@ app.get("/create-collection", async (req, res) => {
       },
     });
 
-    res.send("Collection is created");
+    await qdrantClient.createPayloadIndex("pdf-docs", {
+      field_name: "documentId",
+      field_schema: "keyword",
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Qdrant collection created successfully.",
+    });
   } catch (err) {
     res.status(500).send(err);
   }
