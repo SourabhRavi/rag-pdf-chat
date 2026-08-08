@@ -154,6 +154,35 @@ app.post("/chat", async (req, res) => {
   }
 });
 
+app.get("/document/:documentId", async (req, res) => {
+  try {
+    const { documentId } = req.params;
+
+    const document = await Document.findOne({ documentId });
+
+    if (!document) {
+      res.status(404).json({
+        success: false,
+        message: "Internal Server error",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Document found.",
+      data: {
+        ...document,
+      },
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server error",
+    });
+  }
+});
+
 const startServer = async () => {
   await connectDB();
 
