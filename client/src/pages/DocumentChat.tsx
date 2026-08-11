@@ -56,6 +56,7 @@ const DocumentChat = () => {
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({
           documentId,
           question,
