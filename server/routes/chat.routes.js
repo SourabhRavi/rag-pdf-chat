@@ -5,7 +5,7 @@ const qdrantClient = require("../services/qdrant.service");
 
 const router = express.Router();
 
-router.post("/chat", async (req, res) => {
+router.post("/", async (req, res) => {
   try {
     const { documentId, question } = req.body;
     const questionEmbedding = await createEmbedding(question);
