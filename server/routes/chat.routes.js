@@ -1,6 +1,6 @@
 const express = require("express");
 
-const { createEmbedding } = require("../services/gemini.service");
+const { createEmbedding, ai } = require("../services/gemini.service");
 const qdrantClient = require("../services/qdrant.service");
 
 const router = express.Router();
