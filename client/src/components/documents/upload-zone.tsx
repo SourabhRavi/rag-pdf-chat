@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { uploadPdf } from "@/services/upload.service";
 import type { UploadResponse } from "@/types/api.types";
+import { Loader } from "lucide-react";
 import { useRef, useState, type ChangeEvent } from "react";
 
 type UploadZoneProps = {

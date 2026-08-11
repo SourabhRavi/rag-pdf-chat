@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { api } from "@/services/api";
 import { getDocument } from "@/services/document.service";
 import type { UploadResponse } from "@/types/api.types";
 import { useEffect, useState } from "react";

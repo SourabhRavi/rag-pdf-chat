@@ -6,7 +6,7 @@ export const uploadPdf = async (file: File): Promise<ApiResponse<UploadResponse>
 
   formData.append("pdf", file);
 
-  const { data } = await api.post<ApiResponse<UploadResponse>>("/upload", formData);
+  const { data } = await api.post<ApiResponse<UploadResponse>>("/document/upload", formData);
 
   return data;
 };
