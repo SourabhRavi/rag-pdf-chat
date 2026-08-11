@@ -12,8 +12,12 @@ const router = express.Router();
 
 const upload = multer({ dest: "uploads/" });
 
-router.post("/upload", upload.single("pdf"), async (req, res) => {
+const guestMiddleware = require("../middleware/guest.middleware");
+
+router.post("/upload", guestMiddleware, upload.single("pdf"), async (req, res) => {
   try {
+    const guestId = req.guest;
+
     const dataBuffer = fs.readFileSync(req.file.path);
     const pdfData = await pdfParse(dataBuffer);
     const text = pdfData.text;
@@ -37,6 +41,7 @@ router.post("/upload", upload.single("pdf"), async (req, res) => {
       vector: item.embedding,
       payload: {
         documentId,
+        guestId,
         fileName: req.file.originalname,
         text: item.text,
       },
@@ -49,6 +54,7 @@ router.post("/upload", upload.single("pdf"), async (req, res) => {
     await Document.create({
       documentId,
       fileName: req.file.originalname,
+      guestId,
     });
 
     return res.status(200).json({

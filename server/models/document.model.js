@@ -9,6 +9,10 @@ const documentSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  guestId: {
+    type: String,
+    required: true,
+  },
   uploadedAt: {
     type: Date,
     default: Date.now(),

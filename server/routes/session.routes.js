@@ -1,33 +1,17 @@
 const express = require("express");
-const { randomUUID } = require("crypto");
 
-require("dotenv").config();
-
-const Guest = require("../models/guest.model");
+const { getOrCreateGuest } = require("../services/guest.service");
+const setGuestCookie = require("../utils/guest-cookie");
 
 const router = express.Router();
 
 router.get("/", async (req, res) => {
   try {
     let guestId = req.cookies.guestId;
-    let guest = null;
+    let guest = await getOrCreateGuest(guestId);
 
-    if (guestId) {
-      guest = await Guest.findOne({ guestId });
-    }
-
-    if (!guest) {
-      guestId = randomUUID();
-
-      await Guest.create({
-        guestId,
-      });
-
-      res.cookie("guestId", guestId, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-      });
+    if (!guestId || guest.guestId !== guestId) {
+      setGuestCookie(res, guest.guestId);
     }
 
     return res.status(200).json({
