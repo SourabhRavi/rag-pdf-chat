@@ -5,9 +5,12 @@ const qdrantClient = require("../services/qdrant.service");
 
 const router = express.Router();
 
-router.post("/", async (req, res) => {
+const guestMiddleware = require("../middleware/guest.middleware");
+
+router.post("/", guestMiddleware, async (req, res) => {
   try {
     const { documentId, question } = req.body;
+    const guestId = req.guest.guestId;
     const questionEmbedding = await createEmbedding(question);
     let bestChunk = null;
 
@@ -23,9 +26,22 @@ router.post("/", async (req, res) => {
               value: documentId,
             },
           },
+          {
+            key: "guestId",
+            match: {
+              value: guestId,
+            },
+          },
         ],
       },
     });
+
+    if (searchResult.points.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No matching document content found.",
+      });
+    }
 
     bestChunk = searchResult.points[0].payload.text;
 

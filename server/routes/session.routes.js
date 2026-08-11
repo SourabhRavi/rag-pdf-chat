@@ -5,7 +5,9 @@ const setGuestCookie = require("../utils/guest-cookie");
 
 const router = express.Router();
 
-router.get("/", async (req, res) => {
+const guestMiddleware = require("../middleware/guest.middleware");
+
+router.get("/", guestMiddleware, async (req, res) => {
   try {
     let guestId = req.cookies.guestId;
     let guest = await getOrCreateGuest(guestId);

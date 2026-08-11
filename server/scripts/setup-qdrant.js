@@ -14,7 +14,12 @@ const setupQdrant = async () => {
       field_schema: "keyword",
     });
 
-    console.log("Qdrant collection and payload index created successfully.");
+    await qdrantClient.createPayloadIndex("pdf-docs", {
+      field_name: "guestId",
+      field_schema: "keyword",
+    });
+
+    console.log("Qdrant collection and payload indexes created successfully.");
   } catch (err) {
     console.error("Qdrant setup failed:", err);
     process.exit(1);

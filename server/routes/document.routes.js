@@ -16,7 +16,7 @@ const guestMiddleware = require("../middleware/guest.middleware");
 
 router.post("/upload", guestMiddleware, upload.single("pdf"), async (req, res) => {
   try {
-    const guestId = req.guest;
+    const guestId = req.guest.guestId;
 
     const dataBuffer = fs.readFileSync(req.file.path);
     const pdfData = await pdfParse(dataBuffer);
@@ -74,11 +74,12 @@ router.post("/upload", guestMiddleware, upload.single("pdf"), async (req, res) =
   }
 });
 
-router.get("/:documentId", async (req, res) => {
+router.get("/:documentId", guestMiddleware, async (req, res) => {
   try {
     const { documentId } = req.params;
+    const guestId = req.guest.guestId;
 
-    const document = await Document.findOne({ documentId }).lean();
+    const document = await Document.findOne({ documentId, guestId }).lean();
 
     if (!document) {
       return res.status(404).json({
