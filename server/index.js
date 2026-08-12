@@ -6,6 +6,7 @@ const connectDB = require("./config/db");
 const documentRoutes = require("./routes/document.routes");
 const chatRoutes = require("./routes/chat.routes");
 const sessionRoutes = require("./routes/session.routes");
+const conversationRoutes = require("./routes/conversation.routes");
 
 const cookieParser = require("cookie-parser");
 
@@ -22,6 +23,7 @@ app.use(
 app.use("/document", documentRoutes);
 app.use("/chat", chatRoutes);
 app.use("/session", sessionRoutes);
+app.use("/conversation", conversationRoutes);
 
 const startServer = async () => {
   await connectDB();
