@@ -14,13 +14,16 @@ const Document = require("../models/document.model");
 
 const { chatSchema } = require("../validators/chat.validator");
 const chatRateLimiter = require("../middleware/rate-limit.middleware");
+const GuestUsage = require("../models/guest-usage.model");
+const guestUsageMiddleware = require("../middleware/guest-usage.middleware");
 
-router.post("/", chatRateLimiter, guestMiddleware, async (req, res) => {
+router.post("/", chatRateLimiter, guestMiddleware, guestUsageMiddleware, async (req, res) => {
   const TOP_K = 5;
   const MIN_SCORE = 0.5;
 
   try {
-    const guestId = req.guest.guestId;
+    // const guestId = req.guest.guestId;
+    const { guestId, date } = req.guestUsage;
 
     const result = chatSchema.safeParse(req.body);
     if (!result.success) {
@@ -170,6 +173,19 @@ router.post("/", chatRateLimiter, guestMiddleware, async (req, res) => {
       role: "assistant",
       content: assistantMessage,
     });
+
+    await GuestUsage.findOneAndUpdate(
+      {
+        guestId,
+        date: date,
+      },
+      {
+        $inc: {
+          chatRequests: 1,
+        },
+      },
+      { upsert: true },
+    );
 
     res.end();
   } catch (err) {
