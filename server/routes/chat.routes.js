@@ -13,6 +13,9 @@ const { randomUUID } = require("crypto");
 const Document = require("../models/document.model");
 
 router.post("/", guestMiddleware, async (req, res) => {
+  const TOP_K = 5;
+  const MIN_SCORE = 0.5;
+
   try {
     const { conversationId, question, documentIds } = req.body;
     const guestId = req.guest.guestId;
@@ -59,7 +62,7 @@ router.post("/", guestMiddleware, async (req, res) => {
 
     const searchResult = await qdrantClient.query("pdf-docs", {
       query: questionEmbedding,
-      limit: 1,
+      limit: TOP_K,
       with_payload: true,
       filter: {
         must: [
@@ -79,14 +82,17 @@ router.post("/", guestMiddleware, async (req, res) => {
       },
     });
 
-    if (searchResult.points.length === 0) {
+    const relevantPoints = searchResult.points.filter((point) => point.score >= MIN_SCORE);
+
+    if (relevantPoints.points.length === 0) {
       return res.status(404).json({
         success: false,
-        message: "No matching document content found.",
+        message: "No sufficiently relevant content found.",
       });
     }
 
-    const bestChunk = searchResult.points[0].payload.text;
+    // const bestChunk = searchResult.points[0].payload.text; // this is for limit: 1
+    const context = relevantPoints.map((point) => point.payload.text).join("\n\n---\n\n");
 
     await ChatMessage.create({
       messageId: randomUUID(),
@@ -100,7 +106,12 @@ router.post("/", guestMiddleware, async (req, res) => {
     // for content streaming
     const responseStream = await ai.models.generateContentStream({
       model: "gemini-3.5-flash-lite",
-      contents: `Explain the question using the context: ${bestChunk} and question is: ${question}`,
+      contents: `Answer the user's question using only the provided context.
+                  Context:
+                  ${context}
+
+                  Question:
+                  ${question}`,
     });
 
     res.setHeader("Content-Type", "text/plain; charset=utf-8");

@@ -15,6 +15,9 @@ const upload = multer({ dest: "uploads/" });
 const guestMiddleware = require("../middleware/guest.middleware");
 
 router.post("/upload", guestMiddleware, upload.single("pdf"), async (req, res) => {
+  const CHUNK_SIZE = 2000;
+  const CHUNK_OVERLAP = 500;
+
   try {
     const guestId = req.guest.guestId;
 
@@ -22,7 +25,15 @@ router.post("/upload", guestMiddleware, upload.single("pdf"), async (req, res) =
     const pdfData = await pdfParse(dataBuffer);
     const text = pdfData.text;
 
-    const chunks = text.split("\n\n").filter((chunk) => chunk.trim() !== "");
+    const chunks = [];
+
+    for (let i = 0; i < text.length; i += CHUNK_SIZE - CHUNK_OVERLAP) {
+      const chunk = text.slice(i, i + CHUNK_SIZE);
+
+      if (chunk) {
+        chunks.push(chunk);
+      }
+    }
 
     const documentId = randomUUID();
 
@@ -36,7 +47,7 @@ router.post("/upload", guestMiddleware, upload.single("pdf"), async (req, res) =
       });
     }
 
-    const points = chunkEmbeddings.map((item) => ({
+    const points = chunkEmbeddings.map((item, index) => ({
       id: randomUUID(),
       vector: item.embedding,
       payload: {
@@ -44,6 +55,7 @@ router.post("/upload", guestMiddleware, upload.single("pdf"), async (req, res) =
         guestId,
         fileName: req.file.originalname,
         text: item.text,
+        chunkIndex: index,
       },
     }));
 
