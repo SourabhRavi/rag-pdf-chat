@@ -106,4 +106,46 @@ router.get("/:conversationId", guestMiddleware, async (req, res) => {
   }
 });
 
+router.delete("/:conversationId", guestMiddleware, async (req, res) => {
+  try {
+    const { conversationId } = req.params;
+
+    const guestId = req.guest.guestId;
+
+    const conversation = await Conversation.findOne({
+      guestId,
+      conversationId,
+    });
+
+    if (!conversation) {
+      return res.status(404).json({
+        success: false,
+        message: "Conversation not found.",
+      });
+    }
+
+    await ChatMessage.deleteMany({
+      guestId,
+      conversationId,
+    });
+
+    await Conversation.deleteOne({
+      guestId,
+      conversationId,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Conversation deleted successfully.",
+    });
+  } catch (err) {
+    console.error(err);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to delete conversation.",
+    });
+  }
+});
+
 module.exports = router;
