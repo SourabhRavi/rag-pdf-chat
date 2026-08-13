@@ -10,7 +10,19 @@ const qdrantClient = require("../services/qdrant.service");
 
 const router = express.Router();
 
-const upload = multer({ dest: "uploads/" });
+const upload = multer({
+  dest: "uploads/",
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10 MB
+  },
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype === "application/pdf") {
+      cb(null, true);
+    } else {
+      cb(new Error("Only PDF files are allowed."));
+    }
+  },
+});
 
 const guestMiddleware = require("../middleware/guest.middleware");
 
