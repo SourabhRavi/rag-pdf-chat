@@ -13,8 +13,9 @@ const { randomUUID } = require("crypto");
 const Document = require("../models/document.model");
 
 const { chatSchema } = require("../validators/chat.validator");
+const chatRateLimiter = require("../middleware/rate-limit.middleware");
 
-router.post("/", guestMiddleware, async (req, res) => {
+router.post("/", chatRateLimiter, guestMiddleware, async (req, res) => {
   const TOP_K = 5;
   const MIN_SCORE = 0.5;
 
