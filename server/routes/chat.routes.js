@@ -12,25 +12,25 @@ const ChatMessage = require("../models/chat-message.model");
 const { randomUUID } = require("crypto");
 const Document = require("../models/document.model");
 
+const { chatSchema } = require("../validators/chat.validator");
+
 router.post("/", guestMiddleware, async (req, res) => {
   const TOP_K = 5;
   const MIN_SCORE = 0.5;
 
   try {
-    const { conversationId, question, documentIds } = req.body;
     const guestId = req.guest.guestId;
 
-    if (
-      !conversationId ||
-      !question?.trim() ||
-      !Array.isArray(documentIds) ||
-      documentIds.length === 0
-    ) {
+    const result = chatSchema.safeParse(req.body);
+    if (!result.success) {
       return res.status(400).json({
         success: false,
-        message: "conversationId, question and documentIds are required.",
+        message: "Invalid chat request.",
+        errors: result.error.flatten().fieldErrors,
       });
     }
+
+    const { conversationId, documentIds, question } = result.data;
 
     const conversation = await Conversation.findOne({
       conversationId,
