@@ -19,6 +19,11 @@ const documentSchema = new mongoose.Schema({
   },
 });
 
+documentSchema.index({
+  guestId: 1,
+  documentId: 1,
+});
+
 const Document = mongoose.model("Document", documentSchema);
 
 module.exports = Document;

@@ -21,6 +21,11 @@ const conversationSchema = new mongoose.Schema(
   },
 );
 
+conversationSchema.index({
+  guestId: 1,
+  updatedAt: -1,
+});
+
 const Conversation = mongoose.model("Conversation", conversationSchema);
 
 module.exports = Conversation;
