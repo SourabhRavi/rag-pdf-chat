@@ -84,7 +84,7 @@ router.post("/", guestMiddleware, async (req, res) => {
 
     const relevantPoints = searchResult.points.filter((point) => point.score >= MIN_SCORE);
 
-    if (relevantPoints.points.length === 0) {
+    if (relevantPoints.length === 0) {
       return res.status(404).json({
         success: false,
         message: "No sufficiently relevant content found.",
@@ -136,12 +136,30 @@ router.post("/", guestMiddleware, async (req, res) => {
 
     let assistantMessage = "";
 
-    for await (const chunk of responseStream) {
-      const text = chunk.text;
+    try {
+      for await (const chunk of responseStream) {
+        const text = chunk.text || "";
 
-      assistantMessage += text;
+        if (!text) {
+          continue;
+        }
 
-      res.write(text);
+        assistantMessage += text;
+
+        res.write(text);
+      }
+    } catch (err) {
+      console.error("Gemini streaming error:", err);
+
+      if (!res.headersSent) {
+        return res.status(500).json({
+          success: false,
+          message: "Failed to generate response.",
+        });
+      }
+
+      res.end();
+      return;
     }
 
     await ChatMessage.create({

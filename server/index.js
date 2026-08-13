@@ -9,6 +9,7 @@ const sessionRoutes = require("./routes/session.routes");
 const conversationRoutes = require("./routes/conversation.routes");
 
 const cookieParser = require("cookie-parser");
+const multer = require("multer");
 
 const app = express();
 app.use(express.json());
@@ -24,6 +25,31 @@ app.use("/document", documentRoutes);
 app.use("/chat", chatRoutes);
 app.use("/session", sessionRoutes);
 app.use("/conversation", conversationRoutes);
+
+app.use((err, req, res, next) => {
+  if (err instanceof multer.MulterError) {
+    if (err.code === "LIMIT_FILE_SIZE") {
+      return res.status(400).json({
+        success: false,
+        message: "File size must not exceed 10 MB.",
+      });
+    }
+
+    return res.status(400).json({
+      success: false,
+      message: err.message,
+    });
+  }
+
+  if (err?.message === "Only PDF files are allowed.") {
+    return res.status(400).json({
+      success: false,
+      message: err.message,
+    });
+  }
+
+  next(err);
+});
 
 const startServer = async () => {
   await connectDB();
