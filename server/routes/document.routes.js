@@ -86,6 +86,33 @@ router.post("/upload", guestMiddleware, upload.single("pdf"), async (req, res) =
   }
 });
 
+router.get("/", guestMiddleware, async (req, res) => {
+  try {
+    const guestId = req.guest.guestId;
+
+    const documents = await Document.find({
+      guestId,
+    })
+      .sort({ uploadedAt: -1 })
+      .lean();
+
+    return res.status(200).json({
+      success: true,
+      message: "Documents fetched successfully.",
+      data: {
+        documents,
+      },
+    });
+  } catch (err) {
+    console.error(err);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch documents.",
+    });
+  }
+});
+
 router.get("/:documentId", guestMiddleware, async (req, res) => {
   try {
     const { documentId } = req.params;
@@ -110,6 +137,63 @@ router.get("/:documentId", guestMiddleware, async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Internal Server error",
+    });
+  }
+});
+
+router.delete("/:documentId", guestMiddleware, async (req, res) => {
+  try {
+    const { documentId } = req.params;
+    const guestId = req.guest.guestId;
+
+    const document = await Document.findOne({
+      guestId,
+      documentId,
+    });
+
+    if (!document) {
+      return res.status(404).json({
+        success: false,
+        message: "Document not found.",
+      });
+    }
+
+    await qdrantClient.delete("pdf-docs", {
+      filter: {
+        must: [
+          {
+            key: "guestId",
+            match: [
+              {
+                value: guestId,
+              },
+            ],
+          },
+          {
+            key: "documentId",
+            match: {
+              value: documentId,
+            },
+          },
+        ],
+      },
+    });
+
+    await Document.deleteOne({
+      guestId,
+      documentId,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Document deleted successfully.",
+    });
+  } catch (err) {
+    console.error(err);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to delete document.",
     });
   }
 });
