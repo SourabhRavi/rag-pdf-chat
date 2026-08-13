@@ -37,6 +37,33 @@ router.post("/", guestMiddleware, async (req, res) => {
   }
 });
 
+router.get("/", guestMiddleware, async (req, res) => {
+  try {
+    const guestId = req.guest.guestId;
+
+    const conversation = await Conversation.find({
+      guestId,
+    })
+      .sort({ updatedAt: -1 })
+      .lean();
+
+    return res.status(200).json({
+      success: true,
+      message: "Conversation fetched successfully.",
+      data: {
+        conversation,
+      },
+    });
+  } catch (err) {
+    console.error(err);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch conversation.",
+    });
+  }
+});
+
 router.get("/:conversationId", guestMiddleware, async (req, res) => {
   try {
     const { conversationId } = req.params;
