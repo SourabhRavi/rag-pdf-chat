@@ -103,6 +103,23 @@ router.post("/", guestMiddleware, async (req, res) => {
       documentIds,
     });
 
+    if (conversation.title === "New Chat") {
+      const title =
+        question.trim().length > 50 ? `${question.trim().slice(0, 50)}...` : question.trim();
+
+      await Conversation.updateOne(
+        {
+          guestId,
+          conversationId,
+        },
+        {
+          $set: {
+            title,
+          },
+        },
+      );
+    }
+
     // for content streaming
     const responseStream = await ai.models.generateContentStream({
       model: "gemini-3.5-flash-lite",
