@@ -2,7 +2,8 @@ const setGuestCookie = (res, guestId) => {
   res.cookie("guestId", guestId, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    maxAge: 1000 * 60 * 60 * 24 * 30,
   });
 };
 
