@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Plus, MessageSquare, Upload } from "lucide-react";
+import { Plus, Upload } from "lucide-react";
 
 import {
   Sidebar,
@@ -13,35 +13,10 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 
-import { useDocuments } from "@/hooks/use-documents";
 import DocumentList from "@/components/documents/document-list";
-
-const conversations = [
-  {
-    title: "Understanding RAG Architecture",
-    time: "10m",
-  },
-  {
-    title: "Vector Database Comparison",
-    time: "1h",
-  },
-  {
-    title: "Fine-tuning vs RAG tradeoffs",
-    time: "1d",
-  },
-  {
-    title: "PDF Semantic Search Setup",
-    time: "1d",
-  },
-  {
-    title: "Chunking Strategy & Overlap",
-    time: "4d",
-  },
-];
+import ConversationList from "@/components/conversations/conversation-list";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { data: documents = [], isPending, isError } = useDocuments();
-
   return (
     <Sidebar
       {...props}
@@ -80,22 +55,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarGroupLabel>
 
           <SidebarMenu>
-            {conversations.map((conversation) => (
-              <SidebarMenuItem key={conversation.title}>
-                <SidebarMenuButton className="h-9 px-2">
-                  <MessageSquare className="size-4 text-muted-foreground" />
-
-                  <span className="min-w-0 flex-1 truncate text-sm">{conversation.title}</span>
-
-                  <span className="text-[11px] text-muted-foreground">{conversation.time}</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            ))}
+            <ConversationList />
           </SidebarMenu>
         </SidebarGroup>
 
         {/* Documents */}
-        <SidebarGroup className="mt-auto border-t p-0 pt-4">
+        <SidebarGroup className="mt-auto border-t p-0 pt-4 py-2">
           <div className="mb-2 flex items-center justify-between">
             <SidebarGroupLabel className="p-0 text-[11px] font-semibold uppercase">
               Documents
@@ -107,7 +72,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             </button>
           </div>
 
-          <DocumentList documents={documents} isPending={isPending} isError={isError} />
+          <DocumentList />
         </SidebarGroup>
       </SidebarContent>
 
