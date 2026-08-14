@@ -13,8 +13,8 @@ const AppRoutes = () => {
           <Route path="/" element={<Login />} />
           <Route element={<DashboardLayout />}>
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/conversation/:conversationId" element={<DocumentChat />} />
           </Route>
-          <Route path="/document/:documentId" element={<DocumentChat />} />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>

@@ -8,3 +8,8 @@ export interface Conversation {
 export interface ConversationsResponse {
   conversation: Conversation[];
 }
+
+export interface ConversationResponse {
+  conversationId: string;
+  title: string;
+}

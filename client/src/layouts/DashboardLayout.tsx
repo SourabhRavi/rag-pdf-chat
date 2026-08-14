@@ -30,7 +30,7 @@ const DashboardLayoutContent = () => {
           <ThemeToggle />
         </header>
 
-        <main className="min-h-0 flex-1 overflow-hidden">
+        <main className="min-h-0 flex flex-1 justify-center overflow-hidden">
           <Outlet />
         </main>
       </SidebarInset>
