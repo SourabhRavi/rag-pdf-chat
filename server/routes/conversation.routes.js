@@ -75,7 +75,7 @@ router.get("/:conversationId", guestMiddleware, async (req, res) => {
     }).lean();
 
     if (!conversation) {
-      return res.status(200).json({
+      return res.status(404).json({
         success: false,
         message: "Conversation not found.",
       });
