@@ -1,6 +1,7 @@
 const express = require("express");
 const guestMiddleware = require("../middleware/guest.middleware");
 const GuestUsage = require("../models/guest-usage.model");
+const USAGE_LIMITS = require("../config/usage-limits");
 const router = express.Router();
 
 router.get("/", guestMiddleware, async (req, res) => {
@@ -18,6 +19,7 @@ router.get("/", guestMiddleware, async (req, res) => {
       message: "Usage fetched successfully.",
       data: {
         used: usage?.chatRequests ?? 0,
+        max_limit: USAGE_LIMITS.GUEST.MAX_DAILY_CHAT_REQUESTS,
       },
     });
   } catch (err) {

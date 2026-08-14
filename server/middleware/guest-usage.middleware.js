@@ -1,6 +1,5 @@
+const USAGE_LIMITS = require("../config/usage-limits");
 const GuestUsage = require("../models/guest-usage.model");
-
-const DAILY_CHAT_LIMIT = 10;
 
 const guestUsageMiddleware = async (req, res, next) => {
   try {
@@ -13,7 +12,7 @@ const guestUsageMiddleware = async (req, res, next) => {
       date: today,
     });
 
-    if (usage && usage.chatRequests >= DAILY_CHAT_LIMIT) {
+    if (usage && usage.chatRequests >= USAGE_LIMITS.GUEST.MAX_DAILY_CHAT_REQUESTS) {
       return res.status(429).json({
         success: false,
         message: "Daily chat limit reached. Please try again tomorrow.",
