@@ -3,6 +3,7 @@ import { ArrowUp, CircleX, FileText, Sparkles, Upload } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { useDocuments } from "@/hooks/use-documents";
 import { useDashboardWorkspace } from "@/context/dashboard-workspace/use-dashboard-workspace";
+import DocumentUpload from "@/components/documents/document-upload";
 
 const Dashboard = () => {
   const { data: documents = [] } = useDocuments();
@@ -31,10 +32,18 @@ const Dashboard = () => {
 
           <p className="mt-1 text-xs text-muted-foreground/70">PDF only · 10 MB maximum</p>
 
-          <button className="mt-7 inline-flex h-10 items-center gap-2 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90">
+          {/* <button className="mt-7 inline-flex h-10 items-center gap-2 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90">
             <Upload className="size-4" />
             Upload your first PDF
-          </button>
+          </button> */}
+          <DocumentUpload
+            className={
+              "mt-7 inline-flex h-10 items-center gap-2 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground hover:text-primary-foreground transition-colors hover:bg-primary/90"
+            }
+          >
+            <Upload className="size-4" />
+            Upload your first PDF
+          </DocumentUpload>
         </div>
       </div>
 

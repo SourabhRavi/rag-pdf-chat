@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Plus } from "lucide-react";
+import { Plus, Upload } from "lucide-react";
 
 import {
   Sidebar,
@@ -69,7 +69,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             </SidebarGroupLabel>
 
             {/* Upload document */}
-            <DocumentUpload />
+            <DocumentUpload variant="ghost" size="xs" className="text-primary hover:text-primary">
+              <Upload className="size-3.5" />
+              Upload
+            </DocumentUpload>
           </div>
 
           <DocumentList />

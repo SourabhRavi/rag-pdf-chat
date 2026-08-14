@@ -1,12 +1,20 @@
-import { useRef } from "react";
-import { Upload } from "lucide-react";
+import { useRef, type ComponentProps } from "react";
 
 import { useUploadDocument } from "@/hooks/use-upload-document";
 import { MAX_FILE_SIZE } from "@/constants/file.constants";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
-const DocumentUpload = () => {
+type DocumentUploadProps = {
+  children: React.ReactNode;
+  loadingLabel?: React.ReactNode;
+} & Omit<ComponentProps<typeof Button>, "onClick" | "disabled">;
+
+const DocumentUpload = ({
+  children,
+  loadingLabel = "Uploading...",
+  ...buttonProps
+}: DocumentUploadProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const { mutate: uploadDocument, isPending } = useUploadDocument();
@@ -56,15 +64,14 @@ const DocumentUpload = () => {
       />
 
       <Button
+        {...buttonProps}
         type="button"
         variant="ghost"
         size="xs"
         onClick={() => inputRef.current?.click()}
         disabled={isPending}
-        className="text-primary hover:text-primary"
       >
-        <Upload className="size-3.5" />
-        {isPending ? "Uploading..." : "Upload"}
+        {isPending ? loadingLabel : children}
       </Button>
     </>
   );
