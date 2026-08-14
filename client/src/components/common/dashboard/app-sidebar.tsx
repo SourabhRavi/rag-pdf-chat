@@ -1,5 +1,5 @@
 import * as React from "react";
-import { FileText, MoreHorizontal, Plus, MessageSquare, Upload } from "lucide-react";
+import { Plus, MessageSquare, Upload } from "lucide-react";
 
 import {
   Sidebar,
@@ -12,6 +12,9 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+
+import { useDocuments } from "@/hooks/use-documents";
+import DocumentList from "@/components/documents/document-list";
 
 const conversations = [
   {
@@ -36,30 +39,9 @@ const conversations = [
   },
 ];
 
-const documents = [
-  {
-    documentId: "doc-1",
-    name: "AI Basics.pdf",
-    size: "1.2 MB",
-  },
-  {
-    documentId: "doc-2",
-    name: "RAG Guide.pdf",
-    size: "4.5 MB",
-  },
-  {
-    documentId: "doc-3",
-    name: "Vectordb Info.pdf",
-    size: "870 KB",
-  },
-];
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { data: documents = [], isPending, isError } = useDocuments();
 
-type AppSidebarProps = React.ComponentProps<typeof Sidebar> & {
-  selectedDocumentIds: string[];
-  onDocumentSelectionChange: (documentIds: string[]) => void;
-};
-
-export function AppSidebar({ ...props }: AppSidebarProps) {
   return (
     <Sidebar
       {...props}
@@ -113,7 +95,7 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
         </SidebarGroup>
 
         {/* Documents */}
-        <SidebarGroup className="mt-auto border-t pt-4 p-0">
+        <SidebarGroup className="mt-auto border-t p-0 pt-4">
           <div className="mb-2 flex items-center justify-between">
             <SidebarGroupLabel className="p-0 text-[11px] font-semibold uppercase">
               Documents
@@ -125,23 +107,7 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
             </button>
           </div>
 
-          <SidebarMenu>
-            {documents.map((document) => (
-              <SidebarMenuItem key={document.name}>
-                <SidebarMenuButton className="h-auto min-h-12 px-2 py-2">
-                  <FileText className="size-4 shrink-0 text-muted-foreground" />
-
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm">{document.name}</p>
-
-                    <p className="text-[11px] text-muted-foreground">{document.size}</p>
-                  </div>
-
-                  <MoreHorizontal className="size-4 shrink-0 text-muted-foreground" />
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            ))}
-          </SidebarMenu>
+          <DocumentList documents={documents} isPending={isPending} isError={isError} />
         </SidebarGroup>
       </SidebarContent>
 
