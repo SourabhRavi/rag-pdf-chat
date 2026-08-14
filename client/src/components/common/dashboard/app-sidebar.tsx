@@ -15,6 +15,7 @@ import {
 
 import DocumentList from "@/components/documents/document-list";
 import ConversationList from "@/components/conversations/conversation-list";
+import UsageIndicator from "@/components/usage/usage-indicator";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
@@ -77,17 +78,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarContent>
 
       <SidebarFooter className="border-t p-5">
-        <div className="space-y-2">
-          <div className="flex items-center justify-between text-xs">
-            <span className="text-muted-foreground">Usage Limit</span>
-
-            <span className="font-semibold">7 / 10 questions today</span>
-          </div>
-
-          <div className="h-1.5 overflow-hidden rounded-full bg-muted">
-            <div className="h-full w-[70%] rounded-full bg-primary" />
-          </div>
-        </div>
+        <UsageIndicator />
       </SidebarFooter>
     </Sidebar>
   );

@@ -21,7 +21,7 @@ const ConversationList = () => {
   }
 
   if (conversations.length === 0) {
-    return <p className="px-2 text-xs text-muted-foreground">No conversations yet.</p>;
+    return <p className="pr-2 text-xs text-muted-foreground">No conversations yet.</p>;
   }
 
   return (

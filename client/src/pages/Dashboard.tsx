@@ -2,19 +2,9 @@ import { ArrowUp, CircleX, FileText, Sparkles, Upload } from "lucide-react";
 
 import DashboardLayout from "@/layouts/DashboardLayout";
 import { Textarea } from "@/components/ui/textarea";
-import { useDocuments } from "@/hooks/use-documents";
 
 const Dashboard = () => {
   const selectedDocuments = ["AI Basics.pdf", "RAG Guide.pdf"];
-
-  const { data, isPending, isError, error } = useDocuments();
-
-  console.log("documents query:", {
-    data,
-    isPending,
-    isError,
-    error,
-  });
 
   return (
     <DashboardLayout>
