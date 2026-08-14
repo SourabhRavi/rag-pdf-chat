@@ -10,15 +10,25 @@ const DashboardLayout = ({ children }: AuthLayoutProps) => {
   return (
     <SidebarProvider>
       <AppSidebar />
-      <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center justify-between border-b px-4">
-          <div className="flex gap-2">
+
+      <SidebarInset className="flex h-svh flex-col overflow-hidden">
+        <header className="flex h-14 shrink-0 items-center justify-between border-b px-3 sm:px-4">
+          <div className="flex items-center gap-3">
             <SidebarTrigger className="-ml-1" />
-            <h1 className="text-xl font-semibold">Dashboard</h1>
+
+            <div className="flex items-center gap-2">
+              <h1 className="text-sm font-semibold">New Chat</h1>
+
+              <span className="rounded-md bg-primary/20 dark:bg-primary/40 dark:text-muted-foreground px-2 py-0.5 text-xs text-primary">
+                0 documents
+              </span>
+            </div>
           </div>
+
           <ThemeToggle />
         </header>
-        <main className="flex-1 p-4">{children}</main>
+
+        <main className="min-h-0 flex-1 overflow-hidden">{children}</main>
       </SidebarInset>
     </SidebarProvider>
   );
