@@ -31,3 +31,5 @@ router.get("/", guestMiddleware, async (req, res) => {
     });
   }
 });
+
+module.exports = router;
