@@ -7,6 +7,7 @@ const documentRoutes = require("./routes/document.routes");
 const chatRoutes = require("./routes/chat.routes");
 const sessionRoutes = require("./routes/session.routes");
 const conversationRoutes = require("./routes/conversation.routes");
+const usageRoutes = require("./routes/usage.routes");
 
 const cookieParser = require("cookie-parser");
 const multer = require("multer");
@@ -25,6 +26,7 @@ app.use("/document", documentRoutes);
 app.use("/chat", chatRoutes);
 app.use("/session", sessionRoutes);
 app.use("/conversation", conversationRoutes);
+app.use("/usage", usageRoutes);
 
 app.use((err, req, res, next) => {
   if (err instanceof multer.MulterError) {
