@@ -32,7 +32,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
           <span className="text-base font-semibold">RAG Chat</span>
 
-          <span className="rounded bg-muted px-1.5 py-0.5 text-[10px] font-semibold text-muted-foreground">
+          <span className="rounded bg-muted-foreground/20 px-1.5 py-0.5 text-[10px] font-semibold text-muted-foreground">
             GUEST DEMO
           </span>
         </div>

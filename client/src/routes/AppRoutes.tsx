@@ -1,4 +1,5 @@
 import { ThemeProvider } from "@/components/common/theme-provider";
+import DashboardLayout from "@/layouts/DashboardLayout";
 import Dashboard from "@/pages/Dashboard";
 import DocumentChat from "@/pages/DocumentChat";
 import Login from "@/pages/Login";
@@ -10,7 +11,9 @@ const AppRoutes = () => {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Login />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route element={<DashboardLayout />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+          </Route>
           <Route path="/document/:documentId" element={<DocumentChat />} />
         </Routes>
       </BrowserRouter>
