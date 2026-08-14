@@ -1,3 +1,5 @@
+import type { ChatMessage } from "@/types/chat-message.types";
+
 export interface Conversation {
   conversationId: string;
   title: string;
@@ -12,4 +14,9 @@ export interface ConversationsResponse {
 export interface ConversationResponse {
   conversationId: string;
   title: string;
+}
+
+export interface ConversationDetailsResponse {
+  conversation: Conversation;
+  messages: ChatMessage[];
 }

@@ -4,9 +4,15 @@ import { useParams } from "react-router-dom";
 import { Textarea } from "@/components/ui/textarea";
 import { useDocuments } from "@/hooks/use-documents";
 import { useDashboardWorkspace } from "@/context/dashboard-workspace/use-dashboard-workspace";
+import { useConversation } from "@/hooks/use-conversation";
+import { toast } from "sonner";
+import { useEffect } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const DocumentChat = () => {
   const { conversationId } = useParams();
+
+  const { data, isPending, isError, error } = useConversation(conversationId);
 
   const { data: documents = [] } = useDocuments();
   const { selectedDocumentIds, toggleDocumentSelection } = useDashboardWorkspace();
@@ -15,10 +21,80 @@ const DocumentChat = () => {
     selectedDocumentIds.includes(document.documentId),
   );
 
-  return (
-    <>
-      {/* Composer */}
+  useEffect(() => {
+    if (!isError) {
+      return;
+    }
+    toast.error(error instanceof Error ? error.message : "Failed to load conversation.");
+  }, [isError, error]);
+
+  if (isPending) {
+    return (
       <div className="mx-auto w-full max-w-3xl px-3 pb-3 sm:px-6 sm:pb-6 self-end">
+        <div className="mx-auto w-full max-w-3xl">
+          <div className="rounded-xl border bg-background shadow-sm">
+            <div className="flex items-end gap-2 p-3">
+              <Skeleton className="h-10 flex-1" />
+              <Skeleton className="size-9 shrink-0 rounded-lg" />
+            </div>
+
+            <div className="flex items-center justify-between border-t px-3 py-2">
+              <Skeleton className="h-3 w-32" />
+              <Skeleton className="h-3 w-40" />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="flex h-full items-center justify-center px-4">
+        <div className="max-w-md text-center">
+          <h2 className="text-sm font-semibold">Couldn't load this conversation</h2>
+
+          <p className="mt-1 text-sm text-muted-foreground">
+            {error instanceof Error
+              ? error.message
+              : "Something went wrong while loading the conversation."}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  const { messages } = data;
+
+  return (
+    <div className="flex h-full min-h-0 flex-col w-full max-w-3xl px-3 sm:px-6">
+      {/* Messages */}
+      <div className="min-h-0 flex-1 overflow-y-auto py-6">
+        <div className="mx-auto flex w-full max-w-3xl flex-col gap-4">
+          {messages.length === 0 ? (
+            <div className="flex flex-1 items-center justify-center">
+              <p className="text-sm text-muted-foreground">
+                Ask a question about your selected documents.
+              </p>
+            </div>
+          ) : (
+            messages.map((message) => (
+              <div
+                key={message.messageId}
+                className={
+                  message.role === "user"
+                    ? "ml-auto max-w-[80%] rounded-xl bg-primary px-4 py-2.5 text-sm text-primary-foreground"
+                    : "mr-auto max-w-[80%] rounded-xl bg-muted px-4 py-2.5 text-sm"
+                }
+              >
+                {message.content}
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+      {/* Composer */}
+      <div className="mx-auto w-full max-w-5xl pb-3 sm:pb-6 self-end">
         <div className="rounded-xl border bg-background shadow-sm">
           {/* selected documents */}
           {selectedDocuments.length > 0 && (
@@ -70,7 +146,7 @@ const DocumentChat = () => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

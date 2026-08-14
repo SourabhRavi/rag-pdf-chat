@@ -17,8 +17,28 @@ import DocumentList from "@/components/documents/document-list";
 import ConversationList from "@/components/conversations/conversation-list";
 import UsageIndicator from "@/components/usage/usage-indicator";
 import DocumentUpload from "@/components/documents/document-upload";
+import { useNavigate } from "react-router-dom";
+import { useCreateConversation } from "@/hooks/use-create-conversation";
+import { toast } from "sonner";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const navigate = useNavigate();
+
+  const { mutate: createConversation, isPending } = useCreateConversation();
+
+  const handleNewChatClick = () => {
+    createConversation(undefined, {
+      onSuccess: ({ conversationId }) => {
+        navigate(`/conversation/${conversationId}`);
+      },
+      onError: (error) => {
+        toast.error(
+          error instanceof Error ? error.message : "Failed to create a new conversation.",
+        );
+      },
+    });
+  };
+
   return (
     <Sidebar
       {...props}
@@ -41,9 +61,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         {/* New Chat */}
         <SidebarMenu className="mt-3">
           <SidebarMenuItem>
-            <SidebarMenuButton className="h-9 justify-center bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground">
+            <SidebarMenuButton
+              className="h-9 justify-center bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground"
+              onClick={handleNewChatClick}
+              disabled={isPending}
+            >
               <Plus className="size-4" />
-              <span>New Chat</span>
+              <span>{isPending ? "Creating..." : "New Chat"}</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
