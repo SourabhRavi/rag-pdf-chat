@@ -1,16 +1,16 @@
 const express = require("express");
 const guestMiddleware = require("../middleware/guest.middleware");
 const GuestUsage = require("../models/guest-usage.model");
-const guestUsageMiddleware = require("../middleware/guest-usage.middleware");
 const router = express.Router();
 
-router.get("/", guestMiddleware, guestUsageMiddleware, async (req, res) => {
-  const { guestId, date } = req;
+router.get("/", guestMiddleware, async (req, res) => {
+  const guestId = req.guest.guestId;
+  const today = new Date().toISOString().split("T")[0];
 
   try {
     const usage = await GuestUsage.findOne({
       guestId,
-      date,
+      date: today,
     }).lean();
 
     return res.status(200).json({
