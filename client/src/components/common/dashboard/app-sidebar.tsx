@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Plus, Upload } from "lucide-react";
+import { Plus } from "lucide-react";
 
 import {
   Sidebar,
@@ -16,6 +16,7 @@ import {
 import DocumentList from "@/components/documents/document-list";
 import ConversationList from "@/components/conversations/conversation-list";
 import UsageIndicator from "@/components/usage/usage-indicator";
+import DocumentUpload from "@/components/documents/document-upload";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
@@ -67,10 +68,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               Documents
             </SidebarGroupLabel>
 
-            <button className="flex items-center gap-1 text-xs font-medium text-primary hover:underline">
-              <Upload className="size-3.5" />
-              Upload
-            </button>
+            {/* Upload document */}
+            <DocumentUpload />
           </div>
 
           <DocumentList />

@@ -1,3 +1,4 @@
+import { ApiError } from "@/services/api-error";
 import axios from "axios";
 
 export const api = axios.create({
@@ -5,3 +6,18 @@ export const api = axios.create({
   timeout: 300000,
   withCredentials: true,
 });
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (axios.isAxiosError(error)) {
+      const status = error.response?.status ?? 0;
+
+      const message = error.response?.data?.message ?? "Something went wrong. Please try again.";
+
+      throw new ApiError(message, status);
+    }
+
+    throw error;
+  },
+);
