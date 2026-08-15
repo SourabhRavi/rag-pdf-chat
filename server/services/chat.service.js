@@ -9,9 +9,39 @@ const qdrantClient = require("./qdrant.service");
 
 const { randomUUID } = require("crypto");
 
-const streamChat = async ({ res, date, guestId, conversationId, documentIds, question }) => {
+/** @typedef {import("express").Request} Request */
+/** @typedef {import("express").Response} Response */
+
+/**
+ * @param {{
+ *   req: Request,
+ *   res: Response,
+ *   date: string,
+ *   guestId: string,
+ *   conversationId: string,
+ *   documentIds: string[],
+ *   question: string
+ * }} params
+ */
+
+const streamChat = async ({
+  req,
+  res,
+  requestId,
+  date,
+  guestId,
+  conversationId,
+  documentIds,
+  question,
+}) => {
   const TOP_K = 5;
   const MIN_SCORE = 0.5;
+
+  const abortController = new AbortController();
+
+  req.on("close", () => {
+    abortController.abort();
+  });
 
   const conversation = await Conversation.findOne({
     guestId,
@@ -24,6 +54,7 @@ const streamChat = async ({ res, date, guestId, conversationId, documentIds, que
       status: 404,
       code: CHAT_ERROR_CODES.CONVERSATION_NOT_FOUND,
       message: "Conversation not found.",
+      requestId,
     };
   }
 
@@ -40,6 +71,7 @@ const streamChat = async ({ res, date, guestId, conversationId, documentIds, que
       status: 403,
       code: CHAT_ERROR_CODES.DOCUMENT_ACCESS_DENIED,
       message: "One or more selected documents are not accessible.",
+      requestId,
     };
   }
 
@@ -79,17 +111,26 @@ const streamChat = async ({ res, date, guestId, conversationId, documentIds, que
       status: 404,
       code: CHAT_ERROR_CODES.NO_RELEVANT_CONTENT,
       message: "No sufficiently relevant content found.",
+      requestId,
     };
   }
 
   const context = relevantPoints.map((point) => point.payload.text).join("\n\n---\n\n");
 
+  const sources = [
+    ...new Map(
+      relevantPoints.map((point) => [
+        point.payload.documentId,
+        {
+          documentId: point.payload.documentId,
+          fileName: point.payload.fileName,
+        },
+      ]),
+    ).values(),
+  ];
+
   sendSSE(res, CHAT_EVENTS.SOURCES, {
-    sources: relevantPoints.map((point) => ({
-      documentId: point.payload.documentId,
-      fileName: point.payload.fileName,
-      chunkIndex: point.payload.chunkIndex,
-    })),
+    sources,
   });
 
   await ChatMessage.create({
@@ -129,6 +170,9 @@ const streamChat = async ({ res, date, guestId, conversationId, documentIds, que
                   
                   Question:
                   ${question}`,
+    config: {
+      abortSignal: abortController.signal,
+    },
   });
 
   let assistantMessage = "";
