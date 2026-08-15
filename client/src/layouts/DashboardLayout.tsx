@@ -3,10 +3,17 @@ import ThemeToggle from "@/components/common/theme-toggle";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { DashboardWorkspaceProvider } from "@/context/dashboard-workspace/dashboard-workspace-provider";
 import { useDashboardWorkspace } from "@/context/dashboard-workspace/use-dashboard-workspace";
-import { Outlet } from "react-router-dom";
+import { useConversation } from "@/hooks/use-conversation";
+import { Outlet, useParams } from "react-router-dom";
 
 const DashboardLayoutContent = () => {
+  const { conversationId } = useParams();
+
+  const { data } = useConversation(conversationId);
+
   const { selectedDocumentIds } = useDashboardWorkspace();
+
+  const title = data?.conversation.title ?? "New Chat";
 
   return (
     <SidebarProvider>
@@ -18,7 +25,7 @@ const DashboardLayoutContent = () => {
             <SidebarTrigger className="-ml-1" />
 
             <div className="flex items-center gap-2">
-              <h1 className="text-sm font-semibold">New Chat</h1>
+              <h1 className="max-w-60 truncate text-sm font-semibold">{title}</h1>
 
               <span className="rounded-md bg-primary/20 px-2 py-0.5 text-xs text-primary dark:bg-primary/40 dark:text-muted-foreground">
                 {selectedDocumentIds.length}{" "}
