@@ -14,13 +14,14 @@ const { randomUUID } = require("crypto");
 
 /**
  * @param {{
- *   req: Request,
- *   res: Response,
- *   date: string,
- *   guestId: string,
- *   conversationId: string,
- *   documentIds: string[],
- *   question: string
+ *  req: Request,
+ *  res: Response,
+ *  requestId: string,
+ *  date: string,
+ *  guestId: string,
+ *  conversationId: string,
+ *  documentIds: string[],
+ *  question: string
  * }} params
  */
 
