@@ -57,6 +57,8 @@ router.post("/", chatRateLimiter, guestMiddleware, guestUsageMiddleware, async (
         code: CHAT_ERROR_CODES.CHAT_FAILED,
         message: "Failed to process chat.",
       });
+
+      return res.end();
     }
 
     return res.status(500).json({

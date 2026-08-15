@@ -71,7 +71,7 @@ const streamChat = async ({ res, date, guestId, conversationId, documentIds, que
     },
   });
 
-  const relevantPoints = searchResult.points.map((point) => point.score >= MIN_SCORE);
+  const relevantPoints = searchResult.points.filter((point) => point.score >= MIN_SCORE);
 
   if (relevantPoints.length === 0) {
     return {
