@@ -40,7 +40,6 @@ router.post("/", chatRateLimiter, guestMiddleware, guestUsageMiddleware, async (
 
     if (!result.success) {
       sendSSE(res, CHAT_EVENTS.ERROR, {
-        status: result.status,
         code: result.code ?? CHAT_ERROR_CODES.CHAT_FAILED,
         message: result.message,
       });
