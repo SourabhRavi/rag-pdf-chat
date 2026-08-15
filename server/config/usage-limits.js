@@ -1,6 +1,6 @@
 const USAGE_LIMITS = {
   GUEST: {
-    MAX_DAILY_CHAT_REQUESTS: 3,
+    MAX_DAILY_CHAT_REQUESTS: 10,
   },
 };
 
