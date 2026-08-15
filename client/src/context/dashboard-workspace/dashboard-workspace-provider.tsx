@@ -31,14 +31,35 @@ export const DashboardWorkspaceProvider = ({ children }: { children: ReactNode }
     setSelectedDocumentIds([]);
   }, []);
 
+  const selectDocument = useCallback((documentId: string) => {
+    setSelectedDocumentIds((currentIds) => {
+      if (currentIds.includes(documentId)) {
+        return currentIds;
+      }
+
+      if (currentIds.length >= MAX_SELECTED_DOCUMENTS) {
+        return currentIds;
+      }
+
+      return [...currentIds, documentId];
+    });
+  }, []);
+
   const value = useMemo(
     () => ({
       selectedDocumentIds,
       isDocumentSelected,
       toggleDocumentSelection,
       clearDocumentSelection,
+      selectDocument,
     }),
-    [selectedDocumentIds, isDocumentSelected, toggleDocumentSelection, clearDocumentSelection],
+    [
+      selectedDocumentIds,
+      isDocumentSelected,
+      toggleDocumentSelection,
+      clearDocumentSelection,
+      selectDocument,
+    ],
   );
 
   return (

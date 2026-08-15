@@ -1,8 +1,34 @@
 import { Sparkles, Upload } from "lucide-react";
 
 import DocumentUpload from "@/components/documents/document-upload";
+import { useDashboardWorkspace } from "@/context/dashboard-workspace/use-dashboard-workspace";
+import { useNavigate } from "react-router-dom";
+import { useCreateConversation } from "@/hooks/use-create-conversation";
+import { toast } from "sonner";
 
 const Dashboard = () => {
+  const navigate = useNavigate();
+  const { selectDocument } = useDashboardWorkspace();
+
+  const { mutate: createConversation } = useCreateConversation();
+
+  const handleUploadSuccess = (documentId: string) => {
+    selectDocument(documentId);
+
+    createConversation(undefined, {
+      onSuccess: ({ conversationId }) => {
+        navigate(`/conversation/${conversationId}`);
+      },
+      onError: (error) => {
+        toast.error(
+          error instanceof Error
+            ? error.message
+            : "Failed to create a conversation. Please try again.",
+        );
+      },
+    });
+  };
+
   return (
     <div className="flex h-full min-h-0 flex-col">
       {/* Empty chat area */}
@@ -13,12 +39,11 @@ const Dashboard = () => {
           </div>
 
           <h2 className="mt-5 text-xl font-semibold tracking-tight sm:text-2xl">
-            Ask anything about your documents
+            Skip the scrolling. Just ask!
           </h2>
 
           <p className="mt-2 max-w-lg text-sm leading-6 text-muted-foreground">
-            Upload a PDF, select up to 3 documents, and start asking questions. RAG Chat will find
-            the relevant information for you.
+            Upload a PDF and get straight to the answers you need.
           </p>
 
           <p className="mt-1 text-xs text-muted-foreground/70">PDF only · 10 MB maximum</p>
@@ -27,9 +52,10 @@ const Dashboard = () => {
             className={
               "mt-7 inline-flex h-10 items-center gap-2 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground hover:text-primary-foreground transition-colors hover:bg-primary/90"
             }
+            onUploadSuccess={handleUploadSuccess}
           >
             <Upload className="size-4" />
-            Upload your first PDF
+            Upload your PDF
           </DocumentUpload>
         </div>
       </div>

@@ -8,11 +8,13 @@ import { toast } from "sonner";
 type DocumentUploadProps = {
   children: React.ReactNode;
   loadingLabel?: React.ReactNode;
+  onUploadSuccess?: (documentId: string) => void;
 } & Omit<ComponentProps<typeof Button>, "onClick" | "disabled">;
 
 const DocumentUpload = ({
   children,
   loadingLabel = "Uploading...",
+  onUploadSuccess,
   ...buttonProps
 }: DocumentUploadProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -39,8 +41,9 @@ const DocumentUpload = ({
     }
 
     uploadDocument(file, {
-      onSuccess: () => {
+      onSuccess: ({ data }) => {
         toast.success("PDF uploaded successfully");
+        onUploadSuccess?.(data.documentId);
       },
 
       onError: (error) => {
