@@ -58,14 +58,17 @@ const streamChat = async ({
     };
   }
 
-  const document = await Document.find({
+  const documents = await Document.find({
     guestId,
     documentId: {
       $in: documentIds,
     },
   }).lean();
 
-  if (document.length !== documentIds.length) {
+  // for quick lookup in documents
+  const documentMap = new Map(documents.map((document) => [document.documentId, document]));
+
+  if (documents.length !== documentIds.length) {
     return {
       success: false,
       status: 403,
@@ -117,17 +120,20 @@ const streamChat = async ({
 
   const context = relevantPoints.map((point) => point.payload.text).join("\n\n---\n\n");
 
-  const sources = [
-    ...new Map(
-      relevantPoints.map((point) => [
+  const sources = new Map([
+    relevantPoints.map((point) => {
+      const document = documentMap.get(point.payload.documentId);
+
+      return [
         point.payload.documentId,
         {
           documentId: point.payload.documentId,
-          fileName: point.payload.fileName,
+          fileName: document.fileName,
+          uploadedAt: document.uploadedAt,
         },
-      ]),
-    ).values(),
-  ];
+      ];
+    }),
+  ]);
 
   sendSSE(res, CHAT_EVENTS.SOURCES, {
     sources,
