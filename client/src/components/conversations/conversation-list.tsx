@@ -3,9 +3,17 @@ import { MessageSquare } from "lucide-react";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useConversations } from "@/hooks/use-conversations";
+import { useNavigate } from "react-router-dom";
 
 const ConversationList = () => {
   const { data: conversations = [], isPending, isError } = useConversations();
+
+  const navigate = useNavigate();
+
+  const handleConversationClick = (conversationId: string) => {
+    navigate(`/conversation/${conversationId}`);
+  };
+
   if (isPending) {
     return (
       <div className="space-y-2 px-2">
@@ -17,7 +25,7 @@ const ConversationList = () => {
   }
 
   if (isError) {
-    return <p className="px-2 text-xs text-destructive">Failed to load conversations.</p>;
+    return <p className="pr-2 text-xs text-destructive">Failed to load conversations.</p>;
   }
 
   if (conversations.length === 0) {
@@ -28,7 +36,10 @@ const ConversationList = () => {
     <SidebarMenu>
       {conversations.map((conversation) => (
         <SidebarMenuItem key={conversation.conversationId}>
-          <SidebarMenuButton className="h-9 px-2">
+          <SidebarMenuButton
+            className="h-9 px-2"
+            onClick={() => handleConversationClick(conversation.conversationId)}
+          >
             <MessageSquare className="size-4 shrink-0 text-muted-foreground" />
 
             <span className="min-w-0 flex-1 truncate text-sm">{conversation.title}</span>
