@@ -121,18 +121,20 @@ const streamChat = async ({
   const context = relevantPoints.map((point) => point.payload.text).join("\n\n---\n\n");
 
   const sources = new Map([
-    relevantPoints.map((point) => {
-      const document = documentMap.get(point.payload.documentId);
+    relevantPoints
+      .map((point) => {
+        const document = documentMap.get(point.payload.documentId);
 
-      return [
-        point.payload.documentId,
-        {
-          documentId: point.payload.documentId,
-          fileName: document.fileName,
-          uploadedAt: document.uploadedAt,
-        },
-      ];
-    }),
+        return [
+          point.payload.documentId,
+          {
+            documentId: point.payload.documentId,
+            fileName: document.fileName,
+            uploadedAt: document.uploadedAt,
+          },
+        ];
+      })
+      .values(),
   ]);
 
   sendSSE(res, CHAT_EVENTS.SOURCES, {
