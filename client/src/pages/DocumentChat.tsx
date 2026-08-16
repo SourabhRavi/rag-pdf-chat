@@ -1,4 +1,4 @@
-import { ArrowUp, Check, CircleX, Copy, FileText } from "lucide-react";
+import { ArrowUp, Check, ChevronDown, ChevronUp, CircleX, Copy, FileText } from "lucide-react";
 import { useParams } from "react-router-dom";
 
 import { Textarea } from "@/components/ui/textarea";
@@ -19,6 +19,7 @@ import remarkGfm from "remark-gfm";
 import { Bubble, BubbleContent } from "@/components/ui/bubble";
 import { Badge } from "@/components/ui/badge";
 import ConversationEmpty from "@/components/conversations/conversation-empty";
+import { cn } from "@/lib/utils";
 
 const DocumentChat = () => {
   const { conversationId } = useParams();
@@ -40,6 +41,8 @@ const DocumentChat = () => {
   // const [sources, setSources] = useState<ChatSource[]>([]);
 
   const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
+
+  const [expandedMessages, setExpandedMessages] = useState<Set<string>>(new Set());
 
   const messageList = useMemo(
     () => [...(data?.messages ?? []), ...optimisticMessages],
@@ -86,10 +89,12 @@ const DocumentChat = () => {
       {
         role: "user",
         content: trimmedQuestion,
+        failed: false,
       },
       {
         role: "assistant",
         content: "",
+        failed: false,
       },
     ]);
 
@@ -101,7 +106,7 @@ const DocumentChat = () => {
           question: trimmedQuestion,
         },
         controller.signal,
-        (event) => {
+        async (event) => {
           console.log("Event:", event);
 
           switch (event.type) {
@@ -133,6 +138,9 @@ const DocumentChat = () => {
 
             case "done":
               setStatus(null);
+              await queryClient.invalidateQueries({
+                queryKey: ["usage"],
+              });
               break;
 
             case "error":
@@ -151,7 +159,11 @@ const DocumentChat = () => {
       }
 
       toast.error(error instanceof Error ? error.message : "Failed to send message.");
-      setOptimisticMessages([]);
+
+      // set failed state of optimistic message true if there is an error
+      setOptimisticMessages((currentOptimisticMessages) => {
+        return currentOptimisticMessages.map((message) => ({ ...message, failed: true }));
+      });
     } finally {
       abortController.current = null;
       setIsStreaming(false);
@@ -221,21 +233,76 @@ const DocumentChat = () => {
       <div key={key} className={isUser ? "ml-auto max-w-[80%]" : "mr-auto w-full max-w-[85%]"}>
         <Bubble
           align={isUser ? "end" : "start"}
-          variant={isUser ? "muted" : "ghost"}
+          variant={
+            isUser
+              ? // check if message.failed is true or false and apply styling
+                isOptimistic && "failed" in message && message.failed
+                ? "destructive"
+                : "tinted"
+              : "ghost"
+          }
           className={isUser ? "max-w-full" : "max-w-[37em]"}
         >
-          <BubbleContent>
+          <BubbleContent className="px-0 pb-0">
             {isUser ? (
-              <div className="whitespace-pre-wrap">{message.content}</div>
-            ) : (
-              <div className="typeset typeset-chat text-foreground">
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>{message.content}</ReactMarkdown>
-              </div>
-            )}
+              <div>
+                <div
+                  className={cn(
+                    "whitespace-pre-wrap px-2 pb-2",
+                    !expandedMessages.has(key) &&
+                      "max-h-40 overflow-y-auto scroll-fade scroll-fade-18",
+                  )}
+                >
+                  {/* {message.content} */}
+                  <div className="typeset typeset-chat px-2 text-foreground">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{message.content}</ReactMarkdown>
+                  </div>
+                </div>
+                {message.content.length > 600 && (
+                  <button
+                    onClick={() =>
+                      setExpandedMessages((prev) => {
+                        const next = new Set(prev);
 
-            {isOptimistic && !isUser && !message.content && <StreamingStatus status={status} />}
+                        if (next.has(key)) {
+                          next.delete(key);
+                        } else {
+                          next.add(key);
+                        }
+
+                        return next;
+                      })
+                    }
+                    className="inline-flex items-center gap-1 w-full py-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground cursor-pointer px-3"
+                  >
+                    {expandedMessages.has(key) ? "Show less" : "Show more"}
+                    {expandedMessages.has(key) ? (
+                      <ChevronUp className="size-4 text-muted-foreground" strokeWidth={2} />
+                    ) : (
+                      <ChevronDown className="size-5 text-muted-foreground" />
+                    )}
+                  </button>
+                )}
+              </div>
+            ) : (
+              <>
+                {message.content ? (
+                  <div className="typeset typeset-chat px-2 text-foreground">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{message.content}</ReactMarkdown>
+                  </div>
+                ) : (
+                  isOptimistic && <StreamingStatus status={status} />
+                )}
+              </>
+            )}
           </BubbleContent>
         </Bubble>
+
+        {isOptimistic && message.content && message.role === "user" && (
+          <div className="mt-1 flex items-center text-xs text-muted-foreground italic">
+            Message failed to send
+          </div>
+        )}
 
         {message.content && message.role === "assistant" && (
           <div className="mt-2 flex items-center">
@@ -295,7 +362,7 @@ const DocumentChat = () => {
             <div className="flex flex-wrap gap-2 px-3 pt-3">
               {selectedDocuments.length > 0 ? (
                 selectedDocuments.map((document) => (
-                  <Badge variant="secondary">
+                  <Badge className="rounded-sm bg-primary/15 dark:bg-primary/70 text-muted-foreground dark:text-foreground/70 hover:bg-primary/20 stroke-accent-foreground">
                     <FileText className="size-3.5 shrink-0 text-muted-foreground" />
 
                     <span className="max-w-40 truncate">{document.fileName}</span>
@@ -311,18 +378,32 @@ const DocumentChat = () => {
                   </Badge>
                 ))
               ) : (
-                <Badge variant="destructive">No documents selected</Badge>
+                <Badge variant="destructive" className="rounded-sm">
+                  No documents selected
+                </Badge>
               )}
             </div>
 
             {/* Input */}
             <div className="flex items-end gap-2 p-3">
-              <Textarea
-                value={question}
-                onChange={(event) => setQuestion(event.target.value)}
-                placeholder="Ask a question about your documents..."
-                className="min-h-10 max-h-32 w-full resize-none overflow-y-auto border-0 p-2 text-sm shadow-none focus-visible:ring-0 sm:text-base"
-              />
+              <div className="flex justify-between items-end w-full bg-input/30 rounded-lg">
+                <Textarea
+                  value={question}
+                  onChange={(event) => setQuestion(event.target.value)}
+                  placeholder="Ask a question about your documents..."
+                  className="min-h-10 max-h-32 w-full resize-none border-0 bg-transparent! p-2 text-sm shadow-none focus-visible:ring-0 sm:text-base scrollbar-none"
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" && !event.shiftKey) {
+                      event.preventDefault();
+                      if (selectedDocumentIds.length === 0) {
+                        toast.warning("Select a document to chat.");
+                      } else {
+                        handleSend();
+                      }
+                    }
+                  }}
+                />
+              </div>
 
               <Button
                 type="button"

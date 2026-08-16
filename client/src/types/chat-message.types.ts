@@ -9,4 +9,5 @@ export interface ChatMessage {
 export interface OptimisticChatMessage {
   role: "user" | "assistant";
   content: string;
+  failed?: boolean;
 }

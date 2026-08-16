@@ -19,7 +19,9 @@ export const streamChat = async (
   });
 
   if (!response.ok) {
-    throw new Error("Failed to start chat.");
+    const error = await response.json();
+
+    throw new Error(typeof error?.message === "string" ? error.message : "Failed to start chat.");
   }
 
   if (!response.body) {
