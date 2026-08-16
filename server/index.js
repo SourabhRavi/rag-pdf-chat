@@ -27,6 +27,7 @@ app.use("/chat", chatRoutes);
 app.use("/session", sessionRoutes);
 app.use("/conversation", conversationRoutes);
 app.use("/usage", usageRoutes);
+app.use("/chat", chatRoutes);
 
 app.use((err, req, res, next) => {
   if (err instanceof multer.MulterError) {
