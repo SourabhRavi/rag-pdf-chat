@@ -2,7 +2,7 @@ import { ThemeProvider } from "@/components/common/theme-provider";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import Dashboard from "@/pages/Dashboard";
 import DocumentChat from "@/pages/DocumentChat";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 const AppRoutes = () => {
   return (
@@ -10,6 +10,7 @@ const AppRoutes = () => {
       <BrowserRouter>
         <Routes>
           <Route element={<DashboardLayout />}>
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/conversation/:conversationId" element={<DocumentChat />} />
           </Route>
