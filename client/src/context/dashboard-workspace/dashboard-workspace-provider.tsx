@@ -1,5 +1,6 @@
 import { DashboardWorkspaceContext } from "@/context/dashboard-workspace/dashboard-workspace-context";
 import { useCallback, useMemo, useState, type ReactNode } from "react";
+import { toast } from "sonner";
 
 const MAX_SELECTED_DOCUMENTS = 3;
 
@@ -13,19 +14,26 @@ export const DashboardWorkspaceProvider = ({ children }: { children: ReactNode }
     [selectedDocumentIds],
   );
 
-  const toggleDocumentSelection = useCallback((documentId: string) => {
-    setSelectedDocumentIds((currentIds) => {
-      if (currentIds.includes(documentId)) {
-        return currentIds.filter((id) => id !== documentId);
-      }
+  const toggleDocumentSelection = useCallback(
+    (documentId: string) => {
+      setSelectedDocumentIds((currentIds) => {
+        if (currentIds.includes(documentId)) {
+          return currentIds.filter((id) => id !== documentId);
+        }
 
-      if (currentIds.length >= MAX_SELECTED_DOCUMENTS) {
-        return currentIds;
-      }
+        if (currentIds.length >= MAX_SELECTED_DOCUMENTS) {
+          return currentIds;
+        }
 
-      return [...currentIds, documentId];
-    });
-  }, []);
+        return [...currentIds, documentId];
+      });
+
+      if (selectedDocumentIds.length >= MAX_SELECTED_DOCUMENTS) {
+        toast.warning("Cannot select more than 3 documents.");
+      }
+    },
+    [selectedDocumentIds.length],
+  );
 
   const clearDocumentSelection = useCallback(() => {
     setSelectedDocumentIds([]);
@@ -38,6 +46,7 @@ export const DashboardWorkspaceProvider = ({ children }: { children: ReactNode }
       }
 
       if (currentIds.length >= MAX_SELECTED_DOCUMENTS) {
+        toast.warning("Cannot select more than 3 documents.");
         return currentIds;
       }
 

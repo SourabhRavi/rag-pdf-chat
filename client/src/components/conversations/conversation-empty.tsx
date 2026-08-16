@@ -1,31 +1,8 @@
 import DocumentUpload from "@/components/documents/document-upload";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useDashboardWorkspace } from "@/context/dashboard-workspace/use-dashboard-workspace";
-import { useCreateConversation } from "@/hooks/use-create-conversation";
 import { Sparkles, Upload } from "lucide-react";
-import { toast } from "sonner";
 
 const ConversationEmpty = () => {
-  const { selectDocument } = useDashboardWorkspace();
-
-  const { mutate: createConversation } = useCreateConversation();
-
-  const handleUploadSuccess = (documentId: string) => {
-    selectDocument(documentId);
-
-    createConversation(undefined, {
-      onSuccess: () => {
-        toast.success("File uploaded successfully.");
-      },
-      onError: (error) => {
-        toast.error(
-          error instanceof Error
-            ? error.message
-            : "Failed to create a conversation. Please try again.",
-        );
-      },
-    });
-  };
   return (
     <div className="flex h-full min-h-0 flex-col align-middle">
       {/* Empty chat area */}
@@ -49,7 +26,6 @@ const ConversationEmpty = () => {
             className={
               "mt-7 inline-flex h-10 items-center gap-2 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground hover:text-primary-foreground transition-colors hover:bg-primary/90 dark:hover:bg-primary/90"
             }
-            onUploadSuccess={handleUploadSuccess}
           >
             <Upload className="size-4" />
             Upload your PDF

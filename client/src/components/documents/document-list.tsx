@@ -29,7 +29,7 @@ const DocumentList = () => {
   }
 
   return (
-    <SidebarMenu className="flex-col gap-1 max-h-60 overflow-auto">
+    <SidebarMenu className="flex flex-col gap-1">
       {documents.map((document) => {
         const selected = isDocumentSelected(document.documentId);
 

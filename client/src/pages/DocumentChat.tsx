@@ -266,7 +266,7 @@ const DocumentChat = () => {
   return (
     <div className="relative flex h-full min-h-0 w-full flex-col px-6 xl:px-5">
       {/* Messages */}
-      <div className="min-h-0 flex flex-1 overflow-y-auto py-6">
+      <div className="min-h-0 flex flex-1 overflow-y-auto py-6 scrollbar-none">
         <div className="mx-auto flex w-full max-w-2xl lg:max-w-3xl flex-col gap-4">
           {messageList.length === 0 ? (
             <ConversationEmpty />

@@ -75,21 +75,21 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
 
-      <SidebarContent className="px-5">
+      <SidebarContent className="px-5 overflow-hidden">
         {/* Conversations */}
-        <SidebarGroup className="p-0">
+        <SidebarGroup className="p-0 flex flex-col flex-1 min-h-0">
           <SidebarGroupLabel className="px-0 text-[11px] font-semibold uppercase">
             Conversations
           </SidebarGroupLabel>
 
-          <SidebarMenu>
+          <SidebarMenu className="scroll-fade scrollbar-none min-h-0 flex-1 overflow-y-auto">
             <ConversationList />
           </SidebarMenu>
         </SidebarGroup>
 
         {/* Documents */}
-        <SidebarGroup className="mt-auto border-t p-0 pt-4 py-2">
-          <div className="mb-2 flex items-center justify-between">
+        <SidebarGroup className="mt-4 border-t p-0 pt-4 py-2 h-60 shrink-0 flex-col">
+          <div className="mb-2 flex shrink-0 items-center justify-between">
             <SidebarGroupLabel className="p-0 text-[11px] font-semibold uppercase">
               Documents
             </SidebarGroupLabel>
@@ -105,7 +105,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             </DocumentUpload>
           </div>
 
-          <DocumentList />
+          <div className="scroll-fade scrollbar-none min-h-0 flex-1 overflow-y-auto">
+            <DocumentList />
+          </div>
         </SidebarGroup>
       </SidebarContent>
 

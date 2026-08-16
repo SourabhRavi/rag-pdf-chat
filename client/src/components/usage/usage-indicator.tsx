@@ -2,6 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useUsage } from "@/hooks/use-usage";
 
 const DAILY_QUESTION_LIMIT = 10;
+const WARNING_THRESHOLD = 6;
 
 const UsageIndicator = () => {
   const { data: usage, isPending, isError } = useUsage();
@@ -27,12 +28,26 @@ const UsageIndicator = () => {
   const used = usage.used;
   const percentage = Math.min((used / DAILY_QUESTION_LIMIT) * 100, 100);
 
+  const usageColor =
+    used >= DAILY_QUESTION_LIMIT
+      ? "bg-destructive"
+      : used >= 6
+        ? "bg-orange-500 dark:bg-orange-400"
+        : "bg-primary";
+
+  const progressColor =
+    used >= DAILY_QUESTION_LIMIT
+      ? "text-destructive"
+      : used >= WARNING_THRESHOLD
+        ? "text-orange-500 dark:text-orange-400"
+        : "";
+
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between text-xs">
         <span className="text-muted-foreground">Usage Limit</span>
 
-        <span className="font-semibold">
+        <span className={`font-semibold ${progressColor}`}>
           {used} / {DAILY_QUESTION_LIMIT} questions today
         </span>
       </div>
@@ -45,7 +60,7 @@ const UsageIndicator = () => {
         aria-valuenow={used}
       >
         <div
-          className="h-full rounded-full bg-primary transition-[width]"
+          className={`h-full rounded-full transition-[width,background-color] ${usageColor}`}
           style={{ width: `${percentage}%` }}
         />
       </div>
