@@ -93,7 +93,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             </SidebarGroupLabel>
 
             {/* Upload document */}
-            <DocumentUpload variant="ghost" size="xs" className="text-primary hover:text-primary">
+            <DocumentUpload
+              variant="ghost"
+              size="xs"
+              className="text-primary dark:text-sidebar-foreground/70 hover:text-white hover:bg-sidebar-primary dark:hover:text-primary-foreground dark:hover:bg-primary"
+            >
               <Upload className="size-3.5" />
               Upload
             </DocumentUpload>

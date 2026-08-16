@@ -1,14 +1,11 @@
-import { Sparkles, Upload } from "lucide-react";
-
 import DocumentUpload from "@/components/documents/document-upload";
-import { useDashboardWorkspace } from "@/context/dashboard-workspace/use-dashboard-workspace";
-import { useNavigate } from "react-router-dom";
-import { useCreateConversation } from "@/hooks/use-create-conversation";
-import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useDashboardWorkspace } from "@/context/dashboard-workspace/use-dashboard-workspace";
+import { useCreateConversation } from "@/hooks/use-create-conversation";
+import { Sparkles, Upload } from "lucide-react";
+import { toast } from "sonner";
 
-const Dashboard = () => {
-  const navigate = useNavigate();
+const ConversationEmpty = () => {
   const { selectDocument } = useDashboardWorkspace();
 
   const { mutate: createConversation } = useCreateConversation();
@@ -17,8 +14,8 @@ const Dashboard = () => {
     selectDocument(documentId);
 
     createConversation(undefined, {
-      onSuccess: ({ conversationId }) => {
-        navigate(`/conversation/${conversationId}`);
+      onSuccess: () => {
+        toast.success("File uploaded successfully.");
       },
       onError: (error) => {
         toast.error(
@@ -29,9 +26,8 @@ const Dashboard = () => {
       },
     });
   };
-
   return (
-    <div className="flex h-full min-h-0 flex-col">
+    <div className="flex h-full min-h-0 flex-col align-middle">
       {/* Empty chat area */}
       <div className="flex flex-1 items-center justify-center px-4 sm:px-6">
         <div className="flex w-full max-w-2xl flex-col items-center px-6 text-center">
@@ -40,11 +36,11 @@ const Dashboard = () => {
           </Skeleton>
 
           <h2 className="mt-5 text-xl font-semibold tracking-tight sm:text-2xl">
-            Skip the scrolling. Just ask!
+            Start a new conversation
           </h2>
 
-          <p className="mt-2 max-w-lg text-sm leading-6 text-muted-foreground">
-            Upload a PDF and get straight to the answers you need.
+          <p className="mt-2 max-w-xs text-sm leading-6 text-muted-foreground">
+            Select a PDF from your documents or upload a new one to start asking questions.
           </p>
 
           <p className="mt-1 text-xs text-muted-foreground/70">PDF only · 10 MB maximum</p>
@@ -64,4 +60,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default ConversationEmpty;

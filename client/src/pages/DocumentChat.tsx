@@ -18,6 +18,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Bubble, BubbleContent } from "@/components/ui/bubble";
 import { Badge } from "@/components/ui/badge";
+import ConversationEmpty from "@/components/conversations/conversation-empty";
 
 const DocumentChat = () => {
   const { conversationId } = useParams();
@@ -265,14 +266,10 @@ const DocumentChat = () => {
   return (
     <div className="relative flex h-full min-h-0 w-full flex-col px-6 xl:px-5">
       {/* Messages */}
-      <div className="min-h-0 flex-1 overflow-y-auto py-6 pb-52">
+      <div className="min-h-0 flex flex-1 overflow-y-auto py-6 pb-52">
         <div className="mx-auto flex w-full max-w-2xl lg:max-w-3xl flex-col gap-4">
           {messageList.length === 0 ? (
-            <div className="flex flex-1 items-center justify-center">
-              <p className="text-sm text-muted-foreground">
-                Ask a question about your selected documents.
-              </p>
-            </div>
+            <ConversationEmpty />
           ) : (
             <>
               {data.messages.map((message) => renderMessage(message, message.messageId))}

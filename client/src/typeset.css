@@ -450,3 +450,106 @@
     margin-block-start: 0;
   }
 }
+
+/* -------------------------------------------------------------------------- */
+/* Responsive refinements                                                     */
+/* -------------------------------------------------------------------------- */
+
+@layer components {
+  .typeset {
+    min-width: 0;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    word-break: normal;
+  }
+
+  .typeset :where(h1, h2, h3, h4, h5, h6, p, li, blockquote, dd, dt, a, code) {
+    overflow-wrap: anywhere;
+  }
+
+  /* Keep headings comfortable on narrow screens. */
+  .typeset :where(h1) {
+    font-size: clamp(1.5rem, 5vw, 1.75em);
+    line-height: 1.25;
+  }
+
+  .typeset :where(h2) {
+    font-size: clamp(1.2rem, 4vw, 1.25em);
+    line-height: 1.35;
+  }
+
+  .typeset :where(h3) {
+    font-size: clamp(1.05rem, 3.5vw, 1.125em);
+  }
+
+  /* Prevent markdown content from escaping its chat/message container. */
+  .typeset :where(pre) {
+    max-width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .typeset :where(pre code) {
+    overflow-wrap: normal;
+    word-break: normal;
+  }
+
+  .typeset :where(.typeset-scroll) {
+    max-width: 100%;
+    overscroll-behavior-inline: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+
+  /* Tables stay readable instead of being crushed on mobile. */
+  .typeset :where(table) {
+    width: 100%;
+  }
+
+  .typeset :where(.typeset-scroll table) {
+    width: max-content;
+    min-width: 100%;
+  }
+
+  /* Media must never force the message wider than its container. */
+  .typeset :where(img, video, svg, canvas) {
+    max-width: 100%;
+  }
+
+  /* Slightly tighter rhythm on phones. */
+  @media (max-width: 47.999rem) {
+    .typeset {
+      font-size: 1em;
+      line-height: 1.7;
+    }
+
+    .typeset :where(ul, ol) {
+      padding-inline-start: 1.25em;
+    }
+
+    .typeset :where(blockquote) {
+      padding-inline-start: 0.875em;
+    }
+
+    .typeset :where(pre) {
+      font-size: 0.8125em;
+      padding: 0.75em 0.875em;
+      border-radius: calc(var(--radius, 0.5rem) * 0.9);
+    }
+
+    .typeset :where(thead th) {
+      padding: 0.6em 0.75em;
+    }
+
+    .typeset :where(:is(tbody, tfoot) :is(td, th)) {
+      padding: 0.65em 0.75em;
+    }
+  }
+
+  @media (min-width: 48rem) {
+    .typeset :where(pre) {
+      font-size: 0.875em;
+    }
+  }
+}

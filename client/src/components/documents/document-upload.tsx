@@ -4,6 +4,8 @@ import { useUploadDocument } from "@/hooks/use-upload-document";
 import { MAX_FILE_SIZE } from "@/constants/file.constants";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { Spinner } from "@/components/ui/spinner";
+import { cn } from "@/lib/utils";
 
 type DocumentUploadProps = {
   children: React.ReactNode;
@@ -68,12 +70,15 @@ const DocumentUpload = ({
 
       <Button
         {...buttonProps}
+        className={cn(buttonProps.className)}
         type="button"
         variant="ghost"
         size="xs"
         onClick={() => inputRef.current?.click()}
         disabled={isPending}
       >
+        {isPending && <Spinner />}
+
         {isPending ? loadingLabel : children}
       </Button>
     </>
