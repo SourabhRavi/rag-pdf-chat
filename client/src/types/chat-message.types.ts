@@ -6,3 +6,7 @@ export interface ChatMessage {
   content: string;
   documentIds: string[];
 }
+export interface OptimisticChatMessage {
+  role: "user" | "assistant";
+  content: string;
+}

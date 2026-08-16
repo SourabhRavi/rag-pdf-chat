@@ -6,8 +6,11 @@ import { useDocuments } from "@/hooks/use-documents";
 import { useDashboardWorkspace } from "@/context/dashboard-workspace/use-dashboard-workspace";
 import { useConversation } from "@/hooks/use-conversation";
 import { toast } from "sonner";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import type { ChatMessage, OptimisticChatMessage } from "@/types/chat-message.types";
+import { streamChat } from "@/services/chat.service";
+import { useQueryClient } from "@tanstack/react-query";
 
 const DocumentChat = () => {
   const { conversationId } = useParams();
@@ -21,12 +24,95 @@ const DocumentChat = () => {
     selectedDocumentIds.includes(document.documentId),
   );
 
+  const [question, setQuestion] = useState("");
+  const [optimisticMessages, setOptimisticMessages] = useState<OptimisticChatMessage[]>([]);
+  const [isStreaming, setIsStreaming] = useState(false);
+
+  const messageList = [...(data?.messages ?? []), ...optimisticMessages];
+
+  const abortController = useRef<AbortController | null>(null);
+
+  const queryClient = useQueryClient();
+
   useEffect(() => {
     if (!isError) {
       return;
     }
     toast.error(error instanceof Error ? error.message : "Failed to load conversation.");
   }, [isError, error]);
+
+  const handleSend = async () => {
+    const trimmedQuestion = question.trim();
+
+    if (!trimmedQuestion || !conversationId || selectedDocumentIds.length === 0 || isStreaming) {
+      return;
+    }
+
+    const controller = new AbortController();
+
+    abortController.current = controller;
+
+    setIsStreaming(true);
+    setQuestion("");
+
+    setOptimisticMessages([
+      {
+        role: "user",
+        content: trimmedQuestion,
+      },
+      {
+        role: "assistant",
+        content: "",
+      },
+    ]);
+
+    try {
+      await streamChat(
+        {
+          conversationId,
+          documentIds: selectedDocumentIds,
+          question: trimmedQuestion,
+        },
+        controller.signal,
+        (event) => {
+          console.log("Event: ", event);
+
+          if (event.type === "token") {
+            setOptimisticMessages((currentMessages) => {
+              const assistantMessage = currentMessages[1];
+
+              if (!assistantMessage) {
+                return currentMessages;
+              }
+
+              return [
+                currentMessages[0],
+                {
+                  ...assistantMessage,
+                  content: assistantMessage.content + event.content,
+                },
+              ];
+            });
+          }
+        },
+      );
+
+      await queryClient.invalidateQueries({
+        queryKey: ["conversation", conversationId],
+      });
+      setOptimisticMessages([]);
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") {
+        return;
+      }
+
+      toast.error(error instanceof Error ? error.message : "Failed to send message.");
+      setOptimisticMessages([]);
+    } finally {
+      abortController.current = null;
+      setIsStreaming(false);
+    }
+  };
 
   if (isPending) {
     return (
@@ -64,32 +150,41 @@ const DocumentChat = () => {
     );
   }
 
-  const { messages } = data;
+  // const { messages } = data; not used
+
+  // message bubble
+  const renderMessage = (message: ChatMessage | OptimisticChatMessage, key: string) => (
+    <div
+      key={key}
+      className={
+        message.role === "user"
+          ? "ml-auto max-w-[80%] rounded-xl bg-primary px-4 py-2.5 text-sm text-primary-foreground"
+          : "mr-auto max-w-[80%] rounded-xl bg-muted px-4 py-2.5 text-sm"
+      }
+    >
+      {message.content}
+    </div>
+  );
 
   return (
     <div className="flex h-full min-h-0 flex-col w-full max-w-3xl px-3 sm:px-6">
       {/* Messages */}
       <div className="min-h-0 flex-1 overflow-y-auto py-6">
         <div className="mx-auto flex w-full max-w-3xl flex-col gap-4">
-          {messages.length === 0 ? (
+          {messageList.length === 0 ? (
             <div className="flex flex-1 items-center justify-center">
               <p className="text-sm text-muted-foreground">
                 Ask a question about your selected documents.
               </p>
             </div>
           ) : (
-            messages.map((message) => (
-              <div
-                key={message.messageId}
-                className={
-                  message.role === "user"
-                    ? "ml-auto max-w-[80%] rounded-xl bg-primary px-4 py-2.5 text-sm text-primary-foreground"
-                    : "mr-auto max-w-[80%] rounded-xl bg-muted px-4 py-2.5 text-sm"
-                }
-              >
-                {message.content}
-              </div>
-            ))
+            <>
+              {data.messages.map((message) => renderMessage(message, message.messageId))}
+
+              {optimisticMessages.map((message, index) =>
+                renderMessage(message, `optimisitic-${message.role}-${index}`),
+              )}
+            </>
           )}
         </div>
       </div>
@@ -124,15 +219,20 @@ const DocumentChat = () => {
           )}
           <div className="flex items-end gap-2 p-3">
             <Textarea
+              value={question}
+              onChange={(event) => setQuestion(event.target.value)}
               placeholder="Ask a question about your documents..."
               className="min-h-10 max-h-32 w-full resize-none overflow-y-auto border-0 p-2 text-sm shadow-none focus-visible:ring-0 sm:text-base"
             />
 
             <button
               type="button"
-              disabled
+              disabled={
+                question.trim().length === 0 || selectedDocumentIds.length === 0 || isStreaming
+              }
               className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground transition-opacity disabled:opacity-40"
               aria-label="Send message"
+              onClick={handleSend}
             >
               <ArrowUp className="size-4" />
             </button>
