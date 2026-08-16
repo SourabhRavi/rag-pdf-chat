@@ -66,17 +66,24 @@ export const streamChat = async (
 };
 
 const parseSSEEvent = (rawEvent: string): ChatStreamEvent | null => {
+  // split the lines for event and data
+  const lines = rawEvent.split("\n");
+
+  // get the event: "your-event"
+  const eventLine = lines[0];
+
+  // get the data: "{...}"
+  const dataLine = lines[1];
+
   let eventType = "";
   let data = "";
 
-  for (const line of rawEvent.split("\n")) {
-    if (line.startsWith("event:")) {
-      eventType = line.slice(6).trim();
-    }
+  if (eventLine?.startsWith("event:")) {
+    eventType = eventLine.slice(6).trim();
+  }
 
-    if (line.startsWith("data:")) {
-      data += line.slice(5).trim();
-    }
+  if (dataLine?.startsWith("data:")) {
+    data = dataLine.slice(5).trim();
   }
 
   if (!eventType || !data) {
