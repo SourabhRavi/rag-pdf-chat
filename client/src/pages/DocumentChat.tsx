@@ -1,4 +1,4 @@
-import { ArrowUp, CircleX, FileText } from "lucide-react";
+import { ArrowUp, Check, CircleX, Copy, FileText } from "lucide-react";
 import { useParams } from "react-router-dom";
 
 import { Textarea } from "@/components/ui/textarea";
@@ -6,11 +6,18 @@ import { useDocuments } from "@/hooks/use-documents";
 import { useDashboardWorkspace } from "@/context/dashboard-workspace/use-dashboard-workspace";
 import { useConversation } from "@/hooks/use-conversation";
 import { toast } from "sonner";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { ChatMessage, OptimisticChatMessage } from "@/types/chat-message.types";
 import { streamChat } from "@/services/chat.service";
 import { useQueryClient } from "@tanstack/react-query";
+// import type { ChatSource } from "@/types/chat.types";
+import { StreamingStatus } from "@/components/chat/chat-status";
+import { Button } from "@/components/ui/button";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import { Bubble, BubbleContent } from "@/components/ui/bubble";
+import { Badge } from "@/components/ui/badge";
 
 const DocumentChat = () => {
   const { conversationId } = useParams();
@@ -28,9 +35,19 @@ const DocumentChat = () => {
   const [optimisticMessages, setOptimisticMessages] = useState<OptimisticChatMessage[]>([]);
   const [isStreaming, setIsStreaming] = useState(false);
 
-  const messageList = [...(data?.messages ?? []), ...optimisticMessages];
+  const [status, setStatus] = useState<string | null>(null);
+  // const [sources, setSources] = useState<ChatSource[]>([]);
+
+  const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
+
+  const messageList = useMemo(
+    () => [...(data?.messages ?? []), ...optimisticMessages],
+    [data?.messages, optimisticMessages],
+  );
 
   const abortController = useRef<AbortController | null>(null);
+
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const queryClient = useQueryClient();
 
@@ -40,6 +57,13 @@ const DocumentChat = () => {
     }
     toast.error(error instanceof Error ? error.message : "Failed to load conversation.");
   }, [isError, error]);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({
+      behavior: "auto",
+      block: "end",
+    });
+  }, [messageList]);
 
   const handleSend = async () => {
     const trimmedQuestion = question.trim();
@@ -53,6 +77,8 @@ const DocumentChat = () => {
     abortController.current = controller;
 
     setIsStreaming(true);
+    setStatus(null);
+    // setSources([]);
     setQuestion("");
 
     setOptimisticMessages([
@@ -75,24 +101,41 @@ const DocumentChat = () => {
         },
         controller.signal,
         (event) => {
-          console.log("Event: ", event);
+          console.log("Event:", event);
 
-          if (event.type === "token") {
-            setOptimisticMessages((currentMessages) => {
-              const assistantMessage = currentMessages[1];
+          switch (event.type) {
+            case "status":
+              setStatus(event.status);
+              break;
 
-              if (!assistantMessage) {
-                return currentMessages;
-              }
+            // case "sources":
+            //   setSources(event.sources);
+            //   break;
 
-              return [
-                currentMessages[0],
-                {
-                  ...assistantMessage,
-                  content: assistantMessage.content + event.content,
-                },
-              ];
-            });
+            case "token":
+              setOptimisticMessages((currentMessages) => {
+                const assistantMessage = currentMessages[1];
+
+                if (!assistantMessage) {
+                  return currentMessages;
+                }
+
+                return [
+                  currentMessages[0],
+                  {
+                    ...assistantMessage,
+                    content: assistantMessage.content + event.content,
+                  },
+                ];
+              });
+              break;
+
+            case "done":
+              setStatus(null);
+              break;
+
+            case "error":
+              throw new Error(event.message);
           }
         },
       );
@@ -150,26 +193,79 @@ const DocumentChat = () => {
     );
   }
 
-  // const { messages } = data; not used
+  const handleCopy = async (content: string, messageId: string) => {
+    try {
+      await navigator.clipboard.writeText(content);
+
+      setCopiedMessageId(messageId);
+
+      setTimeout(() => {
+        setCopiedMessageId(null);
+      }, 2000);
+    } catch {
+      toast.error("Failed to copy message.");
+    }
+  };
 
   // message bubble
-  const renderMessage = (message: ChatMessage | OptimisticChatMessage, key: string) => (
-    <div
-      key={key}
-      className={
-        message.role === "user"
-          ? "ml-auto max-w-[80%] rounded-xl bg-primary px-4 py-2.5 text-sm text-primary-foreground"
-          : "mr-auto max-w-[80%] rounded-xl bg-muted px-4 py-2.5 text-sm"
-      }
-    >
-      {message.content}
-    </div>
-  );
+  const renderMessage = (
+    message: ChatMessage | OptimisticChatMessage,
+    key: string,
+    isOptimistic = false,
+  ) => {
+    const isUser = message.role === "user";
+    const isCopied = copiedMessageId === key;
+
+    return (
+      <div key={key} className={isUser ? "ml-auto max-w-[80%]" : "mr-auto w-full max-w-[85%]"}>
+        <Bubble
+          align={isUser ? "end" : "start"}
+          variant={isUser ? "muted" : "ghost"}
+          className={isUser ? "max-w-full" : "max-w-[37em]"}
+        >
+          <BubbleContent>
+            {isUser ? (
+              <div className="whitespace-pre-wrap">{message.content}</div>
+            ) : (
+              <div className="typeset typeset-chat text-foreground">
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>{message.content}</ReactMarkdown>
+              </div>
+            )}
+
+            {isOptimistic && !isUser && !message.content && <StreamingStatus status={status} />}
+          </BubbleContent>
+        </Bubble>
+
+        {message.content && message.role === "assistant" && (
+          <div className="mt-2 flex items-center">
+            <button
+              type="button"
+              onClick={() => handleCopy(message.content, key)}
+              className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs text-muted-foreground transition-colors hover:bg-background/60 hover:text-foreground"
+              aria-label={isCopied ? "Copied" : "Copy message"}
+            >
+              {isCopied ? (
+                <>
+                  <Check className="size-3.5" />
+                  <span>Copied</span>
+                </>
+              ) : (
+                <>
+                  <Copy className="size-3.5" />
+                  <span>Copy</span>
+                </>
+              )}
+            </button>
+          </div>
+        )}
+      </div>
+    );
+  };
 
   return (
-    <div className="flex h-full min-h-0 flex-col w-full max-w-3xl px-3 sm:px-6">
+    <div className="relative flex h-full min-h-0 w-full flex-col">
       {/* Messages */}
-      <div className="min-h-0 flex-1 overflow-y-auto py-6">
+      <div className="min-h-0 flex-1 overflow-y-auto py-6 pb-52">
         <div className="mx-auto flex w-full max-w-3xl flex-col gap-4">
           {messageList.length === 0 ? (
             <div className="flex flex-1 items-center justify-center">
@@ -182,68 +278,76 @@ const DocumentChat = () => {
               {data.messages.map((message) => renderMessage(message, message.messageId))}
 
               {optimisticMessages.map((message, index) =>
-                renderMessage(message, `optimisitic-${message.role}-${index}`),
+                renderMessage(message, `optimistic-${message.role}-${index}`, true),
               )}
             </>
           )}
         </div>
       </div>
+      <div ref={messagesEndRef} />
       {/* Composer */}
-      <div className="mx-auto w-full max-w-5xl pb-3 sm:pb-6 self-end">
-        <div className="rounded-xl border bg-background shadow-sm">
-          {/* selected documents */}
-          {selectedDocuments.length > 0 && (
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 px-3 pb-3 sm:px-6 sm:pb-6">
+        <div className="pointer-events-auto mx-auto w-full">
+          <div className="rounded-2xl border bg-background shadow-sm w-full max-w-3xl mx-auto">
+            {/* Selected documents */}
             <div className="flex flex-wrap gap-2 px-3 pt-3">
-              {selectedDocuments.map((document) => (
-                <div
-                  key={document.documentId}
-                  className="flex max-w-full items-center gap-1.5 rounded-md border bg-muted/50 px-2.5 py-1 text-xs"
-                >
-                  <FileText className="size-3.5 shrink-0 text-muted-foreground" />
+              {selectedDocuments.length > 0 ? (
+                selectedDocuments.map((document) => (
+                  <Badge variant="secondary">
+                    <FileText className="size-3.5 shrink-0 text-muted-foreground" />
 
-                  <span className="max-w-40 truncate">{document.fileName}</span>
+                    <span className="max-w-40 truncate">{document.fileName}</span>
 
-                  <button
-                    type="button"
-                    className="ml-0.5 rounded-sm text-muted-foreground hover:text-foreground"
-                    aria-label={`Remove ${document.fileName}`}
-                  >
-                    <CircleX
-                      className="size-3.5"
+                    <button
+                      type="button"
+                      className="ml-0.5 rounded-sm text-muted-foreground hover:text-foreground"
+                      aria-label={`Remove ${document.fileName}`}
                       onClick={() => toggleDocumentSelection(document.documentId)}
-                    />
-                  </button>
-                </div>
-              ))}
+                    >
+                      <CircleX className="size-3.5" />
+                    </button>
+                  </Badge>
+                ))
+              ) : (
+                <Badge variant="destructive">No documents selected</Badge>
+              )}
             </div>
-          )}
-          <div className="flex items-end gap-2 p-3">
-            <Textarea
-              value={question}
-              onChange={(event) => setQuestion(event.target.value)}
-              placeholder="Ask a question about your documents..."
-              className="min-h-10 max-h-32 w-full resize-none overflow-y-auto border-0 p-2 text-sm shadow-none focus-visible:ring-0 sm:text-base"
-            />
 
-            <button
-              type="button"
-              disabled={
-                question.trim().length === 0 || selectedDocumentIds.length === 0 || isStreaming
-              }
-              className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground transition-opacity disabled:opacity-40"
-              aria-label="Send message"
-              onClick={handleSend}
-            >
-              <ArrowUp className="size-4" />
-            </button>
-          </div>
-          <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 border-t px-3 py-2">
-            <span className="text-xs text-muted-foreground">
-              {selectedDocuments.length} of 3 documents selected
-            </span>
+            {/* Input */}
+            <div className="flex items-end gap-2 p-3">
+              <Textarea
+                value={question}
+                onChange={(event) => setQuestion(event.target.value)}
+                placeholder="Ask a question about your documents..."
+                className="min-h-10 max-h-32 w-full resize-none overflow-y-auto border-0 p-2 text-sm shadow-none focus-visible:ring-0 sm:text-base"
+              />
 
-            <span className="text-xs text-muted-foreground">Select documents to get started</span>
+              <Button
+                type="button"
+                size="icon"
+                onClick={handleSend}
+                disabled={
+                  question.trim().length === 0 || selectedDocumentIds.length === 0 || isStreaming
+                }
+                className="size-9 shrink-0 rounded-lg"
+                aria-label="Send message"
+              >
+                <ArrowUp className="size-4" />
+              </Button>
+            </div>
+
+            {/* Footer */}
+            <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 border-t px-3 py-2">
+              <span className="text-xs text-muted-foreground">
+                {selectedDocuments.length} of 3 documents selected
+              </span>
+
+              <span className="text-xs text-muted-foreground">Select documents to get started</span>
+            </div>
           </div>
+        </div>
+        <div className="pointer-events-none absolute bottom-0 left-0 w-full flex justify-center">
+          <div className="relative w-full max-w-3xl inset-x-0 bottom-0 -z-1 h-10 bg-background/90" />
         </div>
       </div>
     </div>

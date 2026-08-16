@@ -1,6 +1,6 @@
 import type { ChatStreamEvent, SendMessageRequest } from "@/types/chat.types";
 
-const CHAT_URL = "/chat";
+const CHAT_URL = `${import.meta.env.VITE_API_BASE_URL}/chat`;
 
 export const streamChat = async (
   request: SendMessageRequest,
@@ -13,6 +13,7 @@ export const streamChat = async (
       "Content-Type": "application/json",
       Accept: "text/event-stream",
     },
+    credentials: "include",
     body: JSON.stringify(request),
     signal,
   });
