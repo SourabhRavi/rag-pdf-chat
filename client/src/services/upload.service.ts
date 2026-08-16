@@ -1,5 +1,5 @@
 import { api } from "@/services/api";
-import type { ApiResponse, UploadResponse } from "@/types/api.types";
+import type { ApiResponse } from "@/types/api.types";
 
 export const uploadPdf = async (file: File): Promise<ApiResponse<UploadResponse>> => {
   const formData = new FormData();
