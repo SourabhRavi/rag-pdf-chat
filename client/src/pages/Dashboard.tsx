@@ -44,7 +44,7 @@ const Dashboard = () => {
           </h2>
 
           <p className="mt-2 max-w-lg text-sm leading-6 text-muted-foreground">
-            Upload a PDF and get straight to the answers you need.
+            Upload a PDF or select one from your documents and get straight to the answers you need.
           </p>
 
           <p className="mt-1 text-xs text-muted-foreground/70">PDF only · 10 MB maximum</p>
