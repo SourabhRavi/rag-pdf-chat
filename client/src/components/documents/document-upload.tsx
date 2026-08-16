@@ -72,7 +72,7 @@ const DocumentUpload = ({
         {...buttonProps}
         className={cn(buttonProps.className)}
         type="button"
-        variant="ghost"
+        // variant="ghost"
         size="xs"
         onClick={() => inputRef.current?.click()}
         disabled={isPending}

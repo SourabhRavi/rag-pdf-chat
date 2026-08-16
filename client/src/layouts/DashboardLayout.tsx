@@ -27,7 +27,7 @@ const DashboardLayoutContent = () => {
             <div className="flex items-center gap-2">
               <h1 className="max-w-60 truncate text-sm font-semibold">{title}</h1>
 
-              <span className="rounded-md bg-primary/20 px-2 py-0.5 text-xs text-primary dark:bg-primary/40 dark:text-muted-foreground">
+              <span className="rounded-md bg-primary/20 dark:bg-primary/70 px-2 py-0.5 text-xs text-primary dark:text-foreground/70">
                 {selectedDocumentIds.length}{" "}
                 {selectedDocumentIds.length === 1 ? "document" : "documents"} selected
               </span>

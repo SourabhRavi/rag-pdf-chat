@@ -1,4 +1,4 @@
-import { FileText, MoreHorizontal } from "lucide-react";
+import { FileText } from "lucide-react";
 import { SidebarMenu, SidebarMenuItem } from "@/components/ui/sidebar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -39,7 +39,8 @@ const DocumentList = () => {
               className={cn(
                 "flex w-full items-center gap-2 rounded-md px-2 py-2 transition-colors",
                 "hover:bg-accent hover:text-accent-foreground",
-                selected && "bg-primary/10 text-primary hover:bg-primary/15",
+                selected &&
+                  "bg-primary/15 text-primary dark:bg-primary/40 hover:bg-primary/25 dark:hover:bg-primary/60",
               )}
               onClick={() => toggleDocumentSelection(document.documentId)}
             >
@@ -54,7 +55,7 @@ const DocumentList = () => {
                 <FileText
                   className={cn(
                     "size-4 shrink-0 transition-colors",
-                    selected ? "text-primary" : "text-muted-foreground",
+                    selected ? "text-primary dark:text-foreground" : "text-muted-foreground",
                   )}
                   strokeWidth={selected ? 2.5 : 2}
                 />
@@ -63,7 +64,7 @@ const DocumentList = () => {
                   <p
                     className={cn(
                       "truncate text-sm transition-colors",
-                      selected && "font-medium text-primary",
+                      selected && "font-medium text-primary dark:text-foreground",
                     )}
                   >
                     {document.fileName}
@@ -75,14 +76,15 @@ const DocumentList = () => {
                 </div>
               </div>
 
-              <button
+              {/* later add delete in popover */}
+              {/* <button
                 type="button"
                 onClick={(event) => event.stopPropagation()}
                 aria-label={`More options for ${document.fileName}`}
                 className="flex size-10 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
               >
                 <MoreHorizontal className="size-4" />
-              </button>
+              </button> */}
             </div>
           </SidebarMenuItem>
         );

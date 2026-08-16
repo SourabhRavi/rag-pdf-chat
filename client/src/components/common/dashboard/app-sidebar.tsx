@@ -20,6 +20,7 @@ import DocumentUpload from "@/components/documents/document-upload";
 import { useNavigate } from "react-router-dom";
 import { useCreateConversation } from "@/hooks/use-create-conversation";
 import { toast } from "sonner";
+import { Spinner } from "@/components/ui/spinner";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const navigate = useNavigate();
@@ -62,11 +63,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarMenu className="mt-3">
           <SidebarMenuItem>
             <SidebarMenuButton
-              className="h-9 justify-center bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground"
+              role="button"
+              className="h-9 justify-center bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground active:bg-primary active:text-primary-foreground"
               onClick={handleNewChatClick}
               disabled={isPending}
             >
-              <Plus className="size-4" />
+              {isPending ? <Spinner /> : <Plus className="size-4" />}
               <span>{isPending ? "Creating..." : "New Chat"}</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -94,9 +96,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
             {/* Upload document */}
             <DocumentUpload
-              variant="ghost"
+              variant="secondary"
               size="xs"
-              className="text-primary dark:text-sidebar-foreground/70 hover:text-white hover:bg-sidebar-primary dark:hover:text-primary-foreground dark:hover:bg-primary"
+              className="text-primary dark:bg-sidebar-primary/25 hover:text-white dark:text-primary-foreground hover:bg-primary dark:hover:bg-primary "
             >
               <Upload className="size-3.5" />
               Upload

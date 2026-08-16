@@ -266,7 +266,7 @@ const DocumentChat = () => {
   return (
     <div className="relative flex h-full min-h-0 w-full flex-col px-6 xl:px-5">
       {/* Messages */}
-      <div className="min-h-0 flex flex-1 overflow-y-auto py-6 pb-52">
+      <div className="min-h-0 flex flex-1 overflow-y-auto py-6">
         <div className="mx-auto flex w-full max-w-2xl lg:max-w-3xl flex-col gap-4">
           {messageList.length === 0 ? (
             <ConversationEmpty />
@@ -279,9 +279,14 @@ const DocumentChat = () => {
               )}
             </>
           )}
+
+          {/* Space reserved for fixed composer */}
+          <div className="h-52 shrink-0" />
+
+          {/* ref for scrolling */}
+          <div ref={messagesEndRef} />
         </div>
       </div>
-      <div ref={messagesEndRef} />
       {/* Composer */}
       <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 px-3 pb-3 sm:px-6 sm:pb-6">
         <div className="pointer-events-auto mx-auto w-full">
