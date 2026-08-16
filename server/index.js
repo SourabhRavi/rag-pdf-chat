@@ -23,7 +23,6 @@ app.use(
 );
 
 app.use("/document", documentRoutes);
-app.use("/chat", chatRoutes);
 app.use("/session", sessionRoutes);
 app.use("/conversation", conversationRoutes);
 app.use("/usage", usageRoutes);
@@ -57,7 +56,7 @@ app.use((err, req, res, next) => {
 const startServer = async () => {
   await connectDB();
 
-  app.listen(3000, () => {
+  app.listen(process.env.PORT, () => {
     console.log("Server is running on port 3000");
   });
 };
