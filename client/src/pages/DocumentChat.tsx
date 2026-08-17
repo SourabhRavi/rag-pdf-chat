@@ -231,7 +231,12 @@ const DocumentChat = () => {
     const isCopied = copiedMessageId === key;
 
     return (
-      <div key={key} className={isUser ? "ml-auto max-w-[80%]" : "mr-auto w-full max-w-[85%]"}>
+      <div
+        key={key}
+        className={
+          isUser ? "ml-auto max-w-[80%] flex flex-col items-end" : "mr-auto w-full max-w-[85%]"
+        }
+      >
         <Bubble
           align={isUser ? "end" : "start"}
           variant={
@@ -305,7 +310,7 @@ const DocumentChat = () => {
           "failed" in message &&
           message.failed && (
             <div className="mt-1 flex items-center text-xs text-muted-foreground italic">
-              Message failed to send
+              Couldn't send message.
             </div>
           )}
 
