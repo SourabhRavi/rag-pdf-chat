@@ -1,5 +1,4 @@
 import DocumentUpload from "@/components/documents/document-upload";
-import { Skeleton } from "@/components/ui/skeleton";
 import { useDashboardWorkspace } from "@/context/dashboard-workspace/use-dashboard-workspace";
 import { Sparkles, Upload } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
