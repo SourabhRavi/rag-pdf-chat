@@ -6,6 +6,7 @@ type DashboardWorkspaceContextValue = {
   toggleDocumentSelection: (documentId: string) => void;
   clearDocumentSelection: () => void;
   selectDocument: (documentId: string) => void;
+  deselectDocument: (documentId: string) => void;
 };
 
 export const DashboardWorkspaceContext = createContext<DashboardWorkspaceContextValue | null>(null);

@@ -28,7 +28,7 @@ const DocumentChat = () => {
   const { data, isPending, isError, error } = useConversation(conversationId);
 
   const { data: documents = [] } = useDocuments();
-  const { selectedDocumentIds, toggleDocumentSelection } = useDashboardWorkspace();
+  const { selectedDocumentIds, deselectDocument } = useDashboardWorkspace();
 
   const selectedDocuments = documents.filter((document) =>
     selectedDocumentIds.includes(document.documentId),
@@ -342,7 +342,7 @@ const DocumentChat = () => {
                       type="button"
                       className="ml-0.5 rounded-sm text-muted-foreground hover:text-foreground"
                       aria-label={`Remove ${document.fileName}`}
-                      onClick={() => toggleDocumentSelection(document.documentId)}
+                      onClick={() => deselectDocument(document.documentId)}
                     >
                       <CircleX className="size-3.5" />
                     </button>

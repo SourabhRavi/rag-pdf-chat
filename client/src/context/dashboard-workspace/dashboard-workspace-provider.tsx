@@ -16,42 +16,43 @@ export const DashboardWorkspaceProvider = ({ children }: { children: ReactNode }
 
   const toggleDocumentSelection = useCallback(
     (documentId: string) => {
-      setSelectedDocumentIds((currentIds) => {
-        if (currentIds.includes(documentId)) {
-          return currentIds.filter((id) => id !== documentId);
-        }
-
-        if (currentIds.length >= MAX_SELECTED_DOCUMENTS) {
-          return currentIds;
-        }
-
-        return [...currentIds, documentId];
-      });
+      if (selectedDocumentIds.includes(documentId)) {
+        setSelectedDocumentIds((currentIds) => currentIds.filter((id) => id !== documentId));
+        return;
+      }
 
       if (selectedDocumentIds.length >= MAX_SELECTED_DOCUMENTS) {
         toast.warning("Cannot select more than 3 documents.");
+        return;
       }
+
+      setSelectedDocumentIds((currentIds) => [...currentIds, documentId]);
     },
-    [selectedDocumentIds.length],
+    [selectedDocumentIds],
   );
 
   const clearDocumentSelection = useCallback(() => {
     setSelectedDocumentIds([]);
   }, []);
 
-  const selectDocument = useCallback((documentId: string) => {
-    setSelectedDocumentIds((currentIds) => {
-      if (currentIds.includes(documentId)) {
-        return currentIds;
+  const selectDocument = useCallback(
+    (documentId: string) => {
+      if (selectedDocumentIds.includes(documentId)) {
+        return;
       }
 
-      if (currentIds.length >= MAX_SELECTED_DOCUMENTS) {
+      if (selectedDocumentIds.length >= MAX_SELECTED_DOCUMENTS) {
         toast.warning("Cannot select more than 3 documents.");
-        return currentIds;
+        return;
       }
 
-      return [...currentIds, documentId];
-    });
+      setSelectedDocumentIds((currentIds) => [...currentIds, documentId]);
+    },
+    [selectedDocumentIds],
+  );
+
+  const deselectDocument = useCallback((documentId: string) => {
+    setSelectedDocumentIds((currentIds) => currentIds.filter((id) => id !== documentId));
   }, []);
 
   const value = useMemo(
@@ -61,6 +62,7 @@ export const DashboardWorkspaceProvider = ({ children }: { children: ReactNode }
       toggleDocumentSelection,
       clearDocumentSelection,
       selectDocument,
+      deselectDocument,
     }),
     [
       selectedDocumentIds,
@@ -68,6 +70,7 @@ export const DashboardWorkspaceProvider = ({ children }: { children: ReactNode }
       toggleDocumentSelection,
       clearDocumentSelection,
       selectDocument,
+      deselectDocument,
     ],
   );
 
