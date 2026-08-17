@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
+import { useIsMutating } from "@tanstack/react-query";
 
 type DocumentUploadProps = {
   children: React.ReactNode;
@@ -21,9 +22,14 @@ const DocumentUpload = ({
 }: DocumentUploadProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const { mutate: uploadDocument, isPending } = useUploadDocument();
+  const { mutateAsync: uploadDocumentAsync } = useUploadDocument();
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const isUploading =
+    useIsMutating({
+      mutationKey: ["upload"],
+    }) > 0; // useMutating gives: 0, 1, 2, 3
+
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
 
     if (!file) {
@@ -42,18 +48,22 @@ const DocumentUpload = ({
       return;
     }
 
-    uploadDocument(file, {
-      onSuccess: ({ data }) => {
-        toast.success("PDF uploaded successfully");
-        onUploadSuccess?.(data.documentId);
-      },
+    const uploadPromise = uploadDocumentAsync(file);
 
-      onError: (error) => {
-        toast.error(
-          error instanceof Error ? error.message : "Failed to upload PDF. Please try again.",
-        );
-      },
+    toast.promise(uploadPromise, {
+      loading: "Uploading PDF...",
+      success: "PDF uploaded successfully",
+      error: (error) =>
+        !navigator.onLine
+          ? "No internet connection. Please check your network."
+          : error instanceof Error
+            ? error.message
+            : "Failed to upload PDF. Please try again.",
     });
+
+    const { data } = await uploadPromise;
+
+    onUploadSuccess?.(data.documentId);
 
     event.target.value = "";
   };
@@ -75,11 +85,11 @@ const DocumentUpload = ({
         // variant="ghost"
         size="xs"
         onClick={() => inputRef.current?.click()}
-        disabled={isPending}
+        disabled={isUploading}
       >
-        {isPending && <Spinner />}
+        {isUploading && <Spinner />}
 
-        {isPending ? loadingLabel : children}
+        {isUploading ? loadingLabel : children}
       </Button>
     </>
   );

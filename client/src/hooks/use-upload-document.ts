@@ -14,6 +14,7 @@ export const useUploadDocument = () => {
   //   >
 
   return useMutation<ApiResponse<DocumentResponse>, ApiError, File>({
+    mutationKey: ["upload"],
     mutationFn: uploadDocument,
     onSuccess: () => {
       queryClient.invalidateQueries({
