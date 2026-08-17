@@ -144,6 +144,7 @@ const DocumentChat = () => {
               break;
 
             case "error":
+              toast.error(event?.message ?? "Failed to send message.");
               throw new Error(event.message);
           }
         },
@@ -298,11 +299,15 @@ const DocumentChat = () => {
           </BubbleContent>
         </Bubble>
 
-        {isOptimistic && message.content && message.role === "user" && (
-          <div className="mt-1 flex items-center text-xs text-muted-foreground italic">
-            Message failed to send
-          </div>
-        )}
+        {isOptimistic &&
+          message.content &&
+          message.role === "user" &&
+          "failed" in message &&
+          message.failed && (
+            <div className="mt-1 flex items-center text-xs text-muted-foreground italic">
+              Message failed to send
+            </div>
+          )}
 
         {message.content && message.role === "assistant" && (
           <div className="mt-2 flex items-center">
