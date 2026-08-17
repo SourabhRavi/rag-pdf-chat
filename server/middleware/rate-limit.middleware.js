@@ -5,7 +5,7 @@ const chatRateLimiter = rateLimit({
   limit: 10,
   message: {
     success: false,
-    message: "Too many chat requests. Please try again later.",
+    message: "Too many chat requests. Please try again after a minute.",
   },
 });
 
