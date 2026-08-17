@@ -1,4 +1,4 @@
-import { ArrowUp, Check, ChevronDown, ChevronUp, CircleX, Copy, FileText } from "lucide-react";
+import { ArrowUp, Check, CircleX, Copy, FileText } from "lucide-react";
 import { useParams } from "react-router-dom";
 
 import { Textarea } from "@/components/ui/textarea";
@@ -14,12 +14,13 @@ import { useQueryClient } from "@tanstack/react-query";
 // import type { ChatSource } from "@/types/chat.types";
 import { StreamingStatus } from "@/components/chat/chat-status";
 import { Button } from "@/components/ui/button";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+
 import { Bubble, BubbleContent } from "@/components/ui/bubble";
 import { Badge } from "@/components/ui/badge";
 import ConversationEmpty from "@/components/conversations/conversation-empty";
-import { cn } from "@/lib/utils";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import { ExpandableMessage } from "@/components/chat/chat-message-expandable";
 
 const DocumentChat = () => {
   const { conversationId } = useParams();
@@ -41,8 +42,6 @@ const DocumentChat = () => {
   // const [sources, setSources] = useState<ChatSource[]>([]);
 
   const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
-
-  const [expandedMessages, setExpandedMessages] = useState<Set<string>>(new Set());
 
   const messageList = useMemo(
     () => [...(data?.messages ?? []), ...optimisticMessages],
@@ -251,45 +250,7 @@ const DocumentChat = () => {
         >
           <BubbleContent className="px-0 pb-0">
             {isUser ? (
-              <div>
-                <div
-                  className={cn(
-                    "whitespace-pre-wrap px-2 pb-2",
-                    !expandedMessages.has(key) &&
-                      "max-h-40 overflow-y-auto scroll-fade scroll-fade-18",
-                  )}
-                >
-                  {/* {message.content} */}
-                  <div className="typeset typeset-chat px-2 text-foreground">
-                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{message.content}</ReactMarkdown>
-                  </div>
-                </div>
-                {message.content.length > 600 && (
-                  <button
-                    onClick={() =>
-                      setExpandedMessages((prev) => {
-                        const next = new Set(prev);
-
-                        if (next.has(key)) {
-                          next.delete(key);
-                        } else {
-                          next.add(key);
-                        }
-
-                        return next;
-                      })
-                    }
-                    className="inline-flex items-center gap-1 w-full py-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground cursor-pointer px-3"
-                  >
-                    {expandedMessages.has(key) ? "Show less" : "Show more"}
-                    {expandedMessages.has(key) ? (
-                      <ChevronUp className="size-4 text-muted-foreground" strokeWidth={2} />
-                    ) : (
-                      <ChevronDown className="size-5 text-muted-foreground" />
-                    )}
-                  </button>
-                )}
-              </div>
+              <ExpandableMessage content={message.content} />
             ) : (
               <>
                 {message.content ? (
