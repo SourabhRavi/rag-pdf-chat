@@ -7,7 +7,6 @@ import { useDashboardWorkspace } from "@/context/dashboard-workspace/use-dashboa
 import { useConversation } from "@/hooks/use-conversation";
 import { toast } from "sonner";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
 import type { ChatMessage, OptimisticChatMessage } from "@/types/chat-message.types";
 import { streamChat } from "@/services/chat.service";
 import { useQueryClient } from "@tanstack/react-query";
@@ -21,6 +20,7 @@ import ConversationEmpty from "@/components/conversations/conversation-empty";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { ExpandableMessage } from "@/components/chat/chat-message-expandable";
+import DocumentChatSkeleton from "@/components/skeletons/document-chat-skeleton";
 
 const DocumentChat = () => {
   const { conversationId } = useParams();
@@ -171,23 +171,7 @@ const DocumentChat = () => {
   };
 
   if (isPending) {
-    return (
-      <div className="mx-auto w-full max-w-3xl px-3 pb-3 sm:px-6 sm:pb-6 self-end">
-        <div className="mx-auto w-full max-w-3xl">
-          <div className="rounded-xl border bg-background shadow-sm">
-            <div className="flex items-end gap-2 p-3">
-              <Skeleton className="h-10 flex-1" />
-              <Skeleton className="size-9 shrink-0 rounded-lg" />
-            </div>
-
-            <div className="flex items-center justify-between border-t px-3 py-2">
-              <Skeleton className="h-3 w-32" />
-              <Skeleton className="h-3 w-40" />
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+    return <DocumentChatSkeleton />;
   }
 
   if (isError) {

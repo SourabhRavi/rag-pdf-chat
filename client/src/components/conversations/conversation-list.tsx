@@ -42,7 +42,7 @@ const ConversationList = () => {
             className={cn(
               "h-9 px-2",
               activeConversationId === conversation.conversationId &&
-                "bg-primary/15 hover:bg-primary/20",
+                "bg-primary/15 active:bg-primary/15 hover:bg-primary/20",
             )}
             onClick={() => handleConversationClick(conversation.conversationId)}
           >

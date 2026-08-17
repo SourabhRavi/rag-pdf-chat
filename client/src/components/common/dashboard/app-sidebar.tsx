@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Plus, Sparkles, Upload } from "lucide-react";
+import { Plus, Upload } from "lucide-react";
 
 import {
   Sidebar,
@@ -21,6 +21,8 @@ import { useNavigate } from "react-router-dom";
 import { useCreateConversation } from "@/hooks/use-create-conversation";
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
+import Logo from "@/assets/logo/skim-logo-svg.svg?react";
+import WordMark from "@/assets/logo/skim-wordmark-svg.svg?react";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const navigate = useNavigate();
@@ -40,6 +42,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     });
   };
 
+  const handleGotoDashboard = () => {
+    navigate("dashboard");
+  };
+
   return (
     <Sidebar
       {...props}
@@ -48,14 +54,18 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarHeader className="p-5">
         {/* Brand */}
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="flex size-7 items-center justify-center rounded-md bg-primary text-sm font-bold text-primary-foreground">
-              <Sparkles className="size-4 fill-white stroke-white" />
+          <button
+            onClick={handleGotoDashboard}
+            className="flex min-w-0 items-center gap-1.5 cursor-pointer"
+          >
+            <div className="flex size-10 shrink-0 items-center justify-center">
+              <Logo className="size-8 text-foreground" />
             </div>
-            <span className="text-base font-semibold">RAG Chat</span>
-          </div>
 
-          <span className="rounded bg-muted-foreground/20 border border-muted-foreground/25 px-1.5 py-0.5 text-[10px] font-semibold text-muted-foreground">
+            <WordMark className="h-5 w-auto object-contain text-foreground" />
+          </button>
+
+          <span className="shrink-0 rounded-md border border-muted-foreground/25 bg-muted-foreground/10 px-1.5 py-0.5 text-[10px] font-semibold tracking-wide text-muted-foreground">
             GUEST DEMO
           </span>
         </div>

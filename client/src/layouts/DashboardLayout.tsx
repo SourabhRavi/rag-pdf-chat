@@ -1,6 +1,7 @@
 import { AppSidebar } from "@/components/common/dashboard/app-sidebar";
 import ThemeToggle from "@/components/common/theme-toggle";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { Skeleton } from "@/components/ui/skeleton";
 import { DashboardWorkspaceProvider } from "@/context/dashboard-workspace/dashboard-workspace-provider";
 import { useDashboardWorkspace } from "@/context/dashboard-workspace/use-dashboard-workspace";
 import { useConversation } from "@/hooks/use-conversation";
@@ -9,7 +10,7 @@ import { Outlet, useParams } from "react-router-dom";
 const DashboardLayoutContent = () => {
   const { conversationId } = useParams();
 
-  const { data } = useConversation(conversationId);
+  const { data, isPending } = useConversation(conversationId);
 
   const { selectedDocumentIds } = useDashboardWorkspace();
 
@@ -24,10 +25,16 @@ const DashboardLayoutContent = () => {
           <div className="flex min-w-0 flex-1 items-center gap-3">
             <SidebarTrigger className="-ml-1" />
 
-            <div className="flex min-w-0 items-center gap-2">
-              <h1 className="capitalize min-w-0 max-w-40 sm:max-w-3 md:max-w-36 lg:max-w-60 xl:max-w-80 truncate text-sm font-semibold">
-                {title}
-              </h1>
+            <div className="flex min-w-0 items-center justify-start">
+              {isPending ? (
+                <Skeleton className="capitalize min-w-0 max-w-40 sm:max-w-3 md:max-w-36 lg:max-w-60 xl:max-w-80" />
+              ) : (
+                title && (
+                  <h1 className="capitalize min-w-0 max-w-40 sm:max-w-3 md:max-w-36 lg:max-w-60 xl:max-w-80 truncate text-sm font-semibold pr-2.5">
+                    {title}
+                  </h1>
+                )
+              )}
 
               <span className="shrink-0 rounded-md bg-primary/20 dark:bg-primary/70 px-2 py-0.5 text-xs text-primary dark:text-foreground/70 hidden sm:block">
                 {selectedDocumentIds.length}{" "}

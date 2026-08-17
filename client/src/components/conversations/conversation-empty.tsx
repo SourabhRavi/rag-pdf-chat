@@ -1,7 +1,8 @@
 import DocumentUpload from "@/components/documents/document-upload";
 import { useDashboardWorkspace } from "@/context/dashboard-workspace/use-dashboard-workspace";
-import { Sparkles, Upload } from "lucide-react";
+import { Upload } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
+import Logo from "@/assets/logo/skim-logo-svg.svg?react";
 
 const ConversationEmpty = () => {
   const { selectDocument, selectedDocumentIds } = useDashboardWorkspace();
@@ -22,7 +23,9 @@ const ConversationEmpty = () => {
               ease: "easeInOut",
             }}
           >
-            <Sparkles size={30} className="fill-primary stroke-primary" />
+            <div className="rounded-full overflow-hidden">
+              <Logo className="size-15 text-primary" />
+            </div>
           </motion.div>
 
           {/* Stable slot for changing content */}
@@ -65,7 +68,7 @@ const ConversationEmpty = () => {
                   className="absolute inset-x-0 top-0 flex flex-col items-center"
                 >
                   <h2 className="mt-5 text-xl font-semibold tracking-tight sm:text-2xl">
-                    Ready to dive in?
+                    Got questions? Ask away
                   </h2>
 
                   <p className="mt-2 max-w-xs text-sm leading-6 text-muted-foreground">

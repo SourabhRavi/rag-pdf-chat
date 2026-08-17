@@ -1,11 +1,12 @@
-import { Sparkles, Upload } from "lucide-react";
+import { Upload } from "lucide-react";
 
 import DocumentUpload from "@/components/documents/document-upload";
 import { useDashboardWorkspace } from "@/context/dashboard-workspace/use-dashboard-workspace";
 import { useNavigate } from "react-router-dom";
 import { useCreateConversation } from "@/hooks/use-create-conversation";
 import { toast } from "sonner";
-import { Skeleton } from "@/components/ui/skeleton";
+import { motion } from "motion/react";
+import Logo from "@/assets/logo/skim-logo-svg.svg?react";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -35,15 +36,24 @@ const Dashboard = () => {
       {/* Empty chat area */}
       <div className="flex flex-1 items-center justify-center px-4 sm:px-6">
         <div className="flex w-full max-w-2xl flex-col items-center px-6 text-center">
-          <Skeleton className="h-12 w-12 rounded-full bg-transparent">
-            <Sparkles size={30} className="fill-primary stroke-primary" />
-          </Skeleton>
+          <motion.div
+            animate={{ opacity: [0.5, 1, 0.5] }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          >
+            <div className="rounded-full overflow-hidden">
+              <Logo className="size-15 text-primary" />
+            </div>
+          </motion.div>
 
           <h2 className="mt-5 text-xl font-semibold tracking-tight sm:text-2xl">
             Skip the scrolling. Just ask!
           </h2>
 
-          <p className="mt-2 max-w-lg text-sm leading-6 text-muted-foreground">
+          <p className="mt-2 max-w-xs text-sm leading-6 text-muted-foreground">
             Upload a PDF or select one from your documents and get straight to the answers you need.
           </p>
 
