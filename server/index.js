@@ -12,6 +12,8 @@ const usageRoutes = require("./routes/usage.routes");
 const cookieParser = require("cookie-parser");
 const multer = require("multer");
 
+const PORT = process.env.PORT || 3000;
+
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
@@ -33,7 +35,7 @@ app.use((err, req, res, next) => {
     if (err.code === "LIMIT_FILE_SIZE") {
       return res.status(400).json({
         success: false,
-        message: "File size must not exceed 10 MB.",
+        message: "File size must not exceed 500 KB.",
       });
     }
 
@@ -56,8 +58,8 @@ app.use((err, req, res, next) => {
 const startServer = async () => {
   await connectDB();
 
-  app.listen(3000, () => {
-    console.log("Server is running on port 3000");
+  app.listen(PORT, "0.0.0.0", () => {
+    console.log(`Server is running on port ${PORT}`);
   });
 };
 
