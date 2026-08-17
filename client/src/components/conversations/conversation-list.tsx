@@ -48,7 +48,7 @@ const ConversationList = () => {
           >
             <MessageSquare className="size-4 shrink-0 text-muted-foreground" />
 
-            <span className="min-w-0 flex-1 truncate text-sm">{conversation.title}</span>
+            <span className="min-w-0 flex-1 truncate text-sm capitalize">{conversation.title}</span>
           </SidebarMenuButton>
         </SidebarMenuItem>
       ))}

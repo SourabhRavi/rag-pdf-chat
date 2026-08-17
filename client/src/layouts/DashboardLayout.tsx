@@ -21,13 +21,15 @@ const DashboardLayoutContent = () => {
 
       <SidebarInset className="flex h-svh flex-col overflow-hidden">
         <header className="flex h-14 shrink-0 items-center justify-between border-b px-3 sm:px-4">
-          <div className="flex items-center gap-3">
+          <div className="flex min-w-0 flex-1 items-center gap-3">
             <SidebarTrigger className="-ml-1" />
 
-            <div className="flex items-center gap-2">
-              <h1 className="max-w-60 truncate text-sm font-semibold">{title}</h1>
+            <div className="flex min-w-0 items-center gap-2">
+              <h1 className="capitalize min-w-0 max-w-40 sm:max-w-3 md:max-w-36 lg:max-w-60 xl:max-w-80 truncate text-sm font-semibold">
+                {title}
+              </h1>
 
-              <span className="rounded-md bg-primary/20 dark:bg-primary/70 px-2 py-0.5 text-xs text-primary dark:text-foreground/70">
+              <span className="shrink-0 rounded-md bg-primary/20 dark:bg-primary/70 px-2 py-0.5 text-xs text-primary dark:text-foreground/70 hidden sm:block">
                 {selectedDocumentIds.length}{" "}
                 {selectedDocumentIds.length === 1 ? "document" : "documents"} selected
               </span>

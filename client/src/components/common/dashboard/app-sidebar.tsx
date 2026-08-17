@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Plus, Upload } from "lucide-react";
+import { Plus, Sparkles, Upload } from "lucide-react";
 
 import {
   Sidebar,
@@ -47,14 +47,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     >
       <SidebarHeader className="p-5">
         {/* Brand */}
-        <div className="flex items-center gap-2.5">
-          <div className="flex size-7 items-center justify-center rounded-md bg-primary text-sm font-bold text-primary-foreground">
-            R
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="flex size-7 items-center justify-center rounded-md bg-primary text-sm font-bold text-primary-foreground">
+              <Sparkles className="size-4 fill-white stroke-white" />
+            </div>
+            <span className="text-base font-semibold">RAG Chat</span>
           </div>
 
-          <span className="text-base font-semibold">RAG Chat</span>
-
-          <span className="rounded bg-muted-foreground/20 px-1.5 py-0.5 text-[10px] font-semibold text-muted-foreground">
+          <span className="rounded bg-muted-foreground/20 border border-muted-foreground/25 px-1.5 py-0.5 text-[10px] font-semibold text-muted-foreground">
             GUEST DEMO
           </span>
         </div>

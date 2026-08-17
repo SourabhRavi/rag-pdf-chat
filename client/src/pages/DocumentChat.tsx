@@ -336,7 +336,9 @@ const DocumentChat = () => {
                   <Badge className="rounded-sm bg-primary/15 dark:bg-primary/70 text-muted-foreground dark:text-foreground/70 hover:bg-primary/20 stroke-accent-foreground">
                     <FileText className="size-3.5 shrink-0 text-muted-foreground" />
 
-                    <span className="max-w-40 truncate">{document.fileName}</span>
+                    <span className="max-w-10 md:max-w-30 lg:max-w-40 truncate">
+                      {document.fileName}
+                    </span>
 
                     <button
                       type="button"
