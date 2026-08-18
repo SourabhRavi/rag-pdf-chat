@@ -41,7 +41,7 @@ const DashboardLayoutContent = () => {
                 <Skeleton className="capitalize min-w-0 max-w-40 sm:max-w-3 md:max-w-36 lg:max-w-60 xl:max-w-80" />
               ) : (
                 title && (
-                  <h1 className="capitalize min-w-0 max-w-40 sm:max-w-3 md:max-w-36 lg:max-w-60 xl:max-w-80 truncate text-sm font-semibold pr-2.5">
+                  <h1 className="capitalize min-w-0 max-w-40 sm:max-w-3 md:max-w-36 lg:max-w-60 xl:max-w-80 truncate text-sm font-semibold pr-2.5 hidden md:block">
                     {title}
                   </h1>
                 )

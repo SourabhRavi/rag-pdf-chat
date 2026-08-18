@@ -21,6 +21,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { ExpandableMessage } from "@/components/chat/chat-message-expandable";
 import DocumentChatSkeleton from "@/components/skeletons/document-chat-skeleton";
+import Logo from "@/assets/logo/skim-logo-svg.svg?react";
 
 const DocumentChat = () => {
   const { conversationId } = useParams();
@@ -178,6 +179,9 @@ const DocumentChat = () => {
     return (
       <div className="flex h-full items-center justify-center px-4">
         <div className="max-w-md text-center">
+          <div className="flex w-full size-10 shrink-0 items-center justify-center">
+            <Logo className="size-8 text-destructive/40" />
+          </div>
           <h2 className="text-sm font-semibold">Couldn't load this conversation</h2>
 
           <p className="mt-1 text-sm text-muted-foreground">
@@ -185,6 +189,14 @@ const DocumentChat = () => {
               ? error.message
               : "Something went wrong while loading the conversation."}
           </p>
+
+          <Button
+            type="button"
+            size="xs"
+            className="mt-3 inline-flex h-10 items-center gap-2 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+          >
+            Back to dashboard
+          </Button>
         </div>
       </div>
     );
