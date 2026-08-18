@@ -2,7 +2,7 @@ const express = require("express");
 const multer = require("multer");
 const fs = require("fs");
 const { randomUUID } = require("crypto");
-const pdfParse = require("pdf-parse");
+const { PDFParse } = require("pdf-parse");
 
 const Document = require("../models/document.model");
 const { createEmbeddings } = require("../services/gemini.service");
@@ -34,8 +34,13 @@ router.post("/upload", guestMiddleware, upload.single("pdf"), async (req, res) =
     const guestId = req.guest.guestId;
 
     const dataBuffer = fs.readFileSync(req.file.path);
-    const pdfData = await pdfParse(dataBuffer);
-    const text = pdfData.text;
+    const parser = new PDFParse({
+      data: dataBuffer,
+    });
+    const result = await parser.getText();
+    const text = result.text;
+
+    await parser.destroy();
 
     const chunks = [];
 
