@@ -43,7 +43,7 @@ const DocumentUpload = ({
     }
 
     if (file.size > MAX_FILE_SIZE) {
-      toast.error("PDF must be 500 KB or smaller.");
+      toast.error("PDF must be 5 MB or smaller.");
       event.target.value = "";
       return;
     }

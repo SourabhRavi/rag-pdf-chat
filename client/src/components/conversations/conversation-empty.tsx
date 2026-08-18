@@ -48,7 +48,7 @@ const ConversationEmpty = () => {
                     Select a PDF or upload one to get started.
                   </p>
 
-                  <p className="mt-1 text-xs text-muted-foreground/70">PDF only · 500 KB maximum</p>
+                  <p className="mt-1 text-xs text-muted-foreground/70">PDF only · 5 MB maximum</p>
 
                   <DocumentUpload
                     onUploadSuccess={handleUploadSuccess}
