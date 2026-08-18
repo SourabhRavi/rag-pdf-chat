@@ -5,12 +5,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { DashboardWorkspaceProvider } from "@/context/dashboard-workspace/dashboard-workspace-provider";
 import { useDashboardWorkspace } from "@/context/dashboard-workspace/use-dashboard-workspace";
 import { useConversation } from "@/hooks/use-conversation";
-import { Outlet, useParams } from "react-router-dom";
+import { Outlet, useNavigate, useParams } from "react-router-dom";
 import Logo from "@/assets/logo/skim-logo-svg.svg?react";
 import WordMark from "@/assets/logo/skim-wordmark-svg.svg?react";
 
 const DashboardLayoutContent = () => {
   const { conversationId } = useParams();
+  const navigate = useNavigate();
 
   const { data, isPending } = useConversation(conversationId);
 
@@ -29,7 +30,10 @@ const DashboardLayoutContent = () => {
 
             <div className="flex min-w-0 items-center justify-start">
               <div className="flex items-center justify-between pr-2">
-                <div className="flex min-w-0 items-center gap-1.5 cursor-pointer md:hidden">
+                <div
+                  onClick={() => navigate("dashboard")}
+                  className="flex min-w-0 items-center gap-1.5 cursor-pointer md:hidden"
+                >
                   <div className="flex size-10 shrink-0 items-center justify-center">
                     <Logo className="size-8 text-foreground" />
                   </div>
