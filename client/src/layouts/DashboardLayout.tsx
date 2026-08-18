@@ -6,6 +6,8 @@ import { DashboardWorkspaceProvider } from "@/context/dashboard-workspace/dashbo
 import { useDashboardWorkspace } from "@/context/dashboard-workspace/use-dashboard-workspace";
 import { useConversation } from "@/hooks/use-conversation";
 import { Outlet, useParams } from "react-router-dom";
+import Logo from "@/assets/logo/skim-logo-svg.svg?react";
+import WordMark from "@/assets/logo/skim-wordmark-svg.svg?react";
 
 const DashboardLayoutContent = () => {
   const { conversationId } = useParams();
@@ -26,6 +28,15 @@ const DashboardLayoutContent = () => {
             <SidebarTrigger className="-ml-1" />
 
             <div className="flex min-w-0 items-center justify-start">
+              <div className="flex items-center justify-between pr-2">
+                <div className="flex min-w-0 items-center gap-1.5 cursor-pointer md:hidden">
+                  <div className="flex size-10 shrink-0 items-center justify-center">
+                    <Logo className="size-8 text-foreground" />
+                  </div>
+
+                  <WordMark className="h-5 w-auto object-contain text-foreground" />
+                </div>
+              </div>
               {isPending ? (
                 <Skeleton className="capitalize min-w-0 max-w-40 sm:max-w-3 md:max-w-36 lg:max-w-60 xl:max-w-80" />
               ) : (
