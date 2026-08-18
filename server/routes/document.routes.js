@@ -5,7 +5,7 @@ const { randomUUID } = require("crypto");
 const pdfParse = require("pdf-parse");
 
 const Document = require("../models/document.model");
-const { createEmbedding } = require("../services/gemini.service");
+const { createEmbeddings } = require("../services/gemini.service");
 const qdrantClient = require("../services/qdrant.service");
 
 const router = express.Router();
@@ -13,8 +13,7 @@ const router = express.Router();
 const upload = multer({
   dest: "uploads/",
   limits: {
-    // fileSize: 0.5 * 1024 * 1024, // 512 KiB
-    fileSize: 500 * 1000, // 500 KB
+    fileSize: 5 * 1024 * 1024, // 5 MB
   },
   fileFilter: (req, file, cb) => {
     if (file.mimetype === "application/pdf") {
@@ -50,15 +49,14 @@ router.post("/upload", guestMiddleware, upload.single("pdf"), async (req, res) =
 
     const documentId = randomUUID();
 
-    const chunkEmbeddings = [];
+    const embeddings = await createEmbeddings(
+      chunks.map((chunk) => `title: none | text: ${chunk}`),
+    );
 
-    for (const chunk of chunks) {
-      const embedding = await createEmbedding(chunk);
-      chunkEmbeddings.push({
-        text: chunk,
-        embedding,
-      });
-    }
+    const chunkEmbeddings = chunks.map((chunk, index) => ({
+      text: chunk,
+      embedding: embeddings[index],
+    }));
 
     const points = chunkEmbeddings.map((item, index) => ({
       id: randomUUID(),

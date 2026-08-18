@@ -83,7 +83,7 @@ const streamChat = async ({
     status: CHAT_STATUS.SEARCHING,
   });
 
-  const questionEmbedding = await createEmbedding(question);
+  const questionEmbedding = await createEmbedding(`task: search result | query: ${question}`);
 
   const searchResult = await qdrantClient.query("pdf-docs", {
     query: questionEmbedding,
