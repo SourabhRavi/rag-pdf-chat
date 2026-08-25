@@ -6,7 +6,7 @@
 
 **Live Demo:** [skim.chitua.site](https://skim.chitua.site/)
 
----
+<p align="center"> <img src="./client/public/og-image.png" alt="RAG PDF Chat" width="100%" /> </p>
 
 ## Overview
 
