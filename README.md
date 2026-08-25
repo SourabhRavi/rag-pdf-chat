@@ -1,4 +1,4 @@
-# RAG PDF Chat
+# Skim : RAG PDF Chat
 
 > A full-stack Retrieval-Augmented Generation (RAG) application for conversational question-answering over PDF documents.
 
