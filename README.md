@@ -579,25 +579,6 @@ It demonstrates experience with:
 
 ---
 
-## Roadmap
-
-Potential improvements include:
-
-* [ ] Streaming LLM responses
-* [ ] Multi-document knowledge bases
-* [ ] Source citations with page-level references
-* [ ] Improved chunking and retrieval strategies
-* [ ] Retrieval evaluation and benchmarking
-* [ ] Conversation memory
-* [ ] User authentication
-* [ ] Background document processing
-* [ ] Automated tests
-* [ ] CI/CD
-* [ ] Dockerized deployment
-* [ ] Observability and tracing
-
----
-
 ## Author
 
 **Sourabh Ravi**
