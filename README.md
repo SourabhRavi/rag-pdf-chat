@@ -4,7 +4,7 @@
 
 **RAG PDF Chat** lets users upload PDF documents and interact with them through a conversational AI interface. The application processes uploaded documents, indexes their content for semantic retrieval, and uses retrieved context to generate grounded answers with an LLM.
 
-**Live Demo:** [skim.chitua.site](https://skim.chitua.site/)
+**Live Demo:** [skim.chitua.site](https://skim.sourabhravi.site/)
 
 <p align="center"> <img src="./client/public/og-image.png" alt="RAG PDF Chat" width="100%" /> </p>
 
