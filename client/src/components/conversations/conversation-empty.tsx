@@ -1,6 +1,6 @@
 import DocumentUpload from "@/components/documents/document-upload";
 import { useDashboardWorkspace } from "@/context/dashboard-workspace/use-dashboard-workspace";
-import { Upload, Sparkles, FileText } from "lucide-react";
+import { Upload, MessageSquareText, FileText } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import Logo from "@/assets/logo/skim-logo-svg.svg?react";
 
@@ -55,7 +55,7 @@ const ConversationEmpty = () => {
               Ask a question about the {selectedDocumentIds.length} selected PDF{selectedDocumentIds.length === 1 ? "" : "s"}. Skim will keep its answers grounded in those files.
             </p>
             <span className="mt-4 inline-flex items-center gap-2 rounded-full border border-primary/15 bg-primary/[0.06] px-3 py-1.5 text-[9px] font-semibold text-primary">
-              <Sparkles className="size-3" /> Ready for your first question
+              <MessageSquareText className="size-3" /> Ready for your first question
             </span>
           </motion.div>
         )}

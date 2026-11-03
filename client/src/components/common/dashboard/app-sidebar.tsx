@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Plus, Upload, Sparkles, Files, MessageSquareText } from "lucide-react";
+import { Plus, Upload, Activity, Files, MessageSquareText } from "lucide-react";
 import {
   Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupLabel,
   SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem,
@@ -67,7 +67,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
       <SidebarFooter className="skim-sidebar-footer">
         <div className="mb-1 flex items-center gap-2 px-1 text-[9px] font-semibold uppercase tracking-[0.14em] text-muted-foreground group-data-[collapsible=icon]:hidden">
-          <Sparkles className="size-3.5 text-primary" />Your daily workspace
+          <Activity className="size-3.5 text-primary" />Your daily workspace
         </div>
         <UsageIndicator />
       </SidebarFooter>

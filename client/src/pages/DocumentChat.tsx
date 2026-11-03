@@ -1,4 +1,4 @@
-import { ArrowUp, Check, CircleX, Copy, FileText, LockKeyhole, Sparkles } from "lucide-react";
+import { ArrowUp, Check, CircleX, Copy, FileText, LockKeyhole, MessageSquareText } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Textarea } from "@/components/ui/textarea";
 import { useDocuments } from "@/hooks/use-documents";
@@ -178,7 +178,7 @@ const DocumentChat = () => {
       <div className="skim-chat-scroll">
         <div className="skim-chat-feed">
           <div className="skim-chat-context">
-            <span className="skim-chat-context-badge"><Sparkles className="size-3.5 text-primary" /> GROUNDED IN YOUR DOCUMENTS</span>
+            <span className="skim-chat-context-badge"><FileText className="size-3.5 text-primary" /> GROUNDED IN YOUR DOCUMENTS</span>
             <span>{selectedDocuments.length} source{selectedDocuments.length === 1 ? "" : "s"} selected</span>
           </div>
 
@@ -197,7 +197,7 @@ const DocumentChat = () => {
       <div className="skim-composer-area">
         <div className="skim-composer-card">
           <div className="skim-composer-heading">
-            <span className="skim-composer-title"><Sparkles className="size-3.5" /> Ask your documents</span>
+            <span className="skim-composer-title"><MessageSquareText className="size-3.5" /> Ask your documents</span>
             <span className="skim-composer-shortcut">ENTER TO SEND · SHIFT + ENTER FOR A NEW LINE</span>
           </div>
 

@@ -1,4 +1,4 @@
-import { ArrowRight, ArrowUpRight, BookOpen, Check, Clock3, FileText, MessageSquareText, Sparkles, Upload, Plus, MessagesSquare } from "lucide-react";
+import { ArrowRight, ArrowUpRight, BookOpen, Check, Clock3, FileText, MessageSquareText, Activity, Upload, Plus, MessagesSquare } from "lucide-react";
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import DocumentUpload from "@/components/documents/document-upload";
@@ -53,7 +53,7 @@ const Dashboard = () => {
       <div className="skim-dashboard-inner">
         <div className="skim-dashboard-heading">
           <div>
-            <span className="skim-eyebrow"><Sparkles className="size-3.5" /> YOUR KNOWLEDGE WORKSPACE</span>
+            <span className="skim-eyebrow"><BookOpen className="size-3.5" /> YOUR KNOWLEDGE WORKSPACE</span>
             <h1 className="skim-dashboard-title">Everything you need to know.</h1>
             <p className="skim-dashboard-subtitle">
               Bring your PDFs together, ask better questions, and get answers grounded in the documents that matter.
@@ -73,7 +73,7 @@ const Dashboard = () => {
 
         <section className="skim-hero">
           <div className="skim-hero-copy">
-            <span className="skim-hero-kicker"><Sparkles className="size-3.5" /> LESS SEARCHING. MORE UNDERSTANDING.</span>
+            <span className="skim-hero-kicker"><FileText className="size-3.5" /> LESS SEARCHING. MORE UNDERSTANDING.</span>
             <h2 className="skim-hero-title">Turn your documents into <span>clear answers.</span></h2>
             <p className="skim-hero-description">
               Upload a PDF and have a focused conversation with your own knowledge. Skim finds the relevant context before it answers.
@@ -98,7 +98,7 @@ const Dashboard = () => {
               </div>
               <span className="mt-auto text-[8px] font-medium text-[#9999b3]">PDF · READY TO EXPLORE</span>
             </div>
-            <div className="skim-preview-ai"><Sparkles className="size-3.5" /> Context-aware answers</div>
+            <div className="skim-preview-ai"><MessageSquareText className="size-3.5" /> Context-aware answers</div>
           </div>
         </section>
 
@@ -118,7 +118,7 @@ const Dashboard = () => {
             </div>
           </div>
           <div className="skim-stat-card">
-            <span className="skim-stat-icon"><Sparkles className="size-[18px]" /></span>
+            <span className="skim-stat-icon"><Activity className="size-[18px]" /></span>
             <div>
               <p className="skim-stat-label">Questions used today</p>
               <p className="skim-stat-value">{usage ? questionsUsed + " / " + questionLimit : "—"}</p>
