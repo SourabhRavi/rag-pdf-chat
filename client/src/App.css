@@ -236,3 +236,36 @@ button, a, input, textarea { -webkit-tap-highlight-color: transparent; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
 }
+
+
+/* Branded authentication fallback */
+.skim-auth-shell {
+  display: flex;
+  min-height: 100svh;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 15% 5%, rgb(110 105 222 / 11%), transparent 30rem),
+    radial-gradient(ellipse at 100% 100%, rgb(115 110 216 / 8%), transparent 34rem),
+    var(--skim-canvas);
+  padding: 40px 22px;
+}
+.skim-auth-inner { width: min(100%, 420px); }
+.skim-auth-brand { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 28px; }
+.skim-auth-brand-mark { display: grid; width: 43px; height: 43px; place-items: center; border: 1px solid color-mix(in srgb, var(--primary) 14%, var(--border)); border-radius: 14px; background: linear-gradient(145deg, #fff, #f0efff); box-shadow: var(--skim-shadow-soft); }
+.skim-auth-brand-mark svg { width: 32px; height: 32px; }
+.skim-auth-wordmark { width: 74px; height: 24px; color: var(--foreground); }
+.skim-auth-card { border: 1px solid var(--border) !important; border-radius: 20px !important; background: var(--card) !important; box-shadow: var(--skim-shadow) !important; }
+.skim-auth-card [data-slot="card-header"] { padding: 25px 25px 18px; }
+.skim-auth-card [data-slot="card-content"] { padding: 0 25px 25px; }
+.skim-auth-card [data-slot="card-title"] { color: var(--foreground); font-size: 22px; font-weight: 690; letter-spacing: -.045em; }
+.skim-auth-card [data-slot="card-description"] { margin-top: 5px; color: var(--muted-foreground); font-size: 11px; }
+.skim-auth-card [data-slot="button"] { min-height: 42px; border-radius: 11px; }
+.skim-auth-footnote { margin-top: 18px; color: var(--muted-foreground); font-size: 9px; line-height: 1.7; text-align: center; }
+
+.dark .skim-auth-brand-mark { border-color: #3c3b58; background: linear-gradient(145deg, #28283e, #1c1d2b); }
+
+@media (prefers-reduced-motion: reduce) {
+  .skim-auth-shell * { transition-duration: .01ms !important; }
+}
