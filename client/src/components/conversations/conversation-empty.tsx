@@ -1,85 +1,65 @@
 import DocumentUpload from "@/components/documents/document-upload";
 import { useDashboardWorkspace } from "@/context/dashboard-workspace/use-dashboard-workspace";
-import { Upload } from "lucide-react";
+import { Upload, Sparkles, FileText } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import Logo from "@/assets/logo/skim-logo-svg.svg?react";
 
 const ConversationEmpty = () => {
   const { selectDocument, selectedDocumentIds } = useDashboardWorkspace();
 
-  const handleUploadSuccess = (documentId: string) => {
-    selectDocument(documentId);
-  };
+  const handleUploadSuccess = (documentId: string) => selectDocument(documentId);
+
   return (
-    <div className="flex h-full min-h-0 flex-col">
-      <div className="flex flex-1 items-center justify-center px-4 sm:px-6">
-        <div className="flex w-full max-w-2xl flex-col items-center px-6 text-center">
-          {/* Keep this completely outside the animation */}
+    <div className="skim-chat-empty">
+      <motion.div
+        initial={{ opacity: 0, y: 8, scale: .96 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: .45, ease: [.2, .75, .25, 1] }}
+        className="skim-chat-empty-mark"
+      >
+        <Logo className="size-9" />
+      </motion.div>
+
+      <AnimatePresence mode="wait">
+        {selectedDocumentIds.length === 0 ? (
           <motion.div
-            animate={{ opacity: [0.5, 1, 0.5] }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
+            key="no-documents"
+            initial={{ opacity: 0, y: 7 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -7 }}
+            transition={{ duration: .2 }}
+            className="flex flex-col items-center"
           >
-            <div className="rounded-full overflow-hidden">
-              <Logo className="size-15 text-primary" />
-            </div>
+            <h2 className="skim-chat-empty-title">A good question starts with context.</h2>
+            <p className="skim-chat-empty-description">
+              Select a PDF from your library or upload one. Skim will find the relevant passages before it answers.
+            </p>
+            <span className="mt-3 inline-flex items-center gap-1.5 text-[9px] text-muted-foreground/80">
+              <FileText className="size-3" /> PDF only · 5 MB maximum
+            </span>
+            <DocumentUpload onUploadSuccess={handleUploadSuccess} className="skim-button-primary mt-5">
+              <Upload className="size-3.5" /> Upload a PDF
+            </DocumentUpload>
           </motion.div>
-
-          {/* Stable slot for changing content */}
-          <div className="relative w-full min-h-44">
-            <AnimatePresence mode="wait">
-              {selectedDocumentIds.length === 0 ? (
-                <motion.div
-                  key="empty"
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
-                  transition={{ duration: 0.2 }}
-                  className="absolute inset-x-0 top-0 flex flex-col items-center"
-                >
-                  <h2 className="mt-5 text-xl font-semibold tracking-tight sm:text-2xl">
-                    Start a new conversation
-                  </h2>
-
-                  <p className="mt-2 max-w-xs text-sm leading-6 text-muted-foreground">
-                    Select a PDF or upload one to get started.
-                  </p>
-
-                  <p className="mt-1 text-xs text-muted-foreground/70">PDF only · 5 MB maximum</p>
-
-                  <DocumentUpload
-                    onUploadSuccess={handleUploadSuccess}
-                    className="mt-7 inline-flex h-10 items-center gap-2 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-                  >
-                    <Upload className="size-4" />
-                    Upload your PDF
-                  </DocumentUpload>
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="selected"
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
-                  transition={{ duration: 0.2 }}
-                  className="absolute inset-x-0 top-0 flex flex-col items-center"
-                >
-                  <h2 className="mt-5 text-xl font-semibold tracking-tight sm:text-2xl">
-                    Got questions? Ask away
-                  </h2>
-
-                  <p className="mt-2 max-w-xs text-sm leading-6 text-muted-foreground">
-                    Ask questions, get explanations, or find something specific in your PDFs.
-                  </p>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        </div>
-      </div>
+        ) : (
+          <motion.div
+            key="documents-selected"
+            initial={{ opacity: 0, y: 7 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -7 }}
+            transition={{ duration: .2 }}
+            className="flex flex-col items-center"
+          >
+            <h2 className="skim-chat-empty-title">Your documents are ready.</h2>
+            <p className="skim-chat-empty-description">
+              Ask a question about the {selectedDocumentIds.length} selected PDF{selectedDocumentIds.length === 1 ? "" : "s"}. Skim will keep its answers grounded in those files.
+            </p>
+            <span className="mt-4 inline-flex items-center gap-2 rounded-full border border-primary/15 bg-primary/[0.06] px-3 py-1.5 text-[9px] font-semibold text-primary">
+              <Sparkles className="size-3" /> Ready for your first question
+            </span>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
