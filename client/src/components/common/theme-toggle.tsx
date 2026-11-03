@@ -4,13 +4,13 @@ import { useTheme } from "@/hooks/useTheme";
 
 const ThemeToggle = () => {
   const { theme, setTheme } = useTheme();
-
   const isDark = theme === "dark";
 
   return (
     <Button
       variant="outline"
       size="icon"
+      className="skim-theme-toggle"
       onClick={() => setTheme(isDark ? "light" : "dark")}
       aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
       title={isDark ? "Switch to light mode" : "Switch to dark mode"}

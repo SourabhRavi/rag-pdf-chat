@@ -8,60 +8,44 @@ import { useConversation } from "@/hooks/use-conversation";
 import { Outlet, useNavigate, useParams } from "react-router-dom";
 import Logo from "@/assets/logo/skim-logo-svg.svg?react";
 import WordMark from "@/assets/logo/skim-wordmark-svg.svg?react";
+import type { CSSProperties } from "react";
 
 const DashboardLayoutContent = () => {
   const { conversationId } = useParams();
   const navigate = useNavigate();
-
   const { data, isPending } = useConversation(conversationId);
-
   const { selectedDocumentIds } = useDashboardWorkspace();
-
-  const title = data?.conversation.title ?? "New Chat";
+  const title = data?.conversation.title ?? (conversationId ? "New conversation" : "Your library");
+  const sidebarStyle = {
+    "--sidebar-width": "17.5rem",
+    "--sidebar-width-icon": "4.35rem",
+  } as CSSProperties;
 
   return (
-    <SidebarProvider>
+    <SidebarProvider className="skim-app-shell" style={sidebarStyle}>
       <AppSidebar />
-
-      <SidebarInset className="flex h-svh flex-col overflow-hidden">
-        <header className="flex h-14 shrink-0 items-center justify-between border-b px-3 sm:px-4">
-          <div className="flex min-w-0 flex-1 items-center gap-3">
-            <SidebarTrigger className="-ml-1" />
-
-            <div className="flex min-w-0 items-center justify-start">
-              <div className="flex items-center justify-between pr-2">
-                <div
-                  onClick={() => navigate("dashboard")}
-                  className="flex min-w-0 items-center gap-1.5 cursor-pointer md:hidden"
-                >
-                  <div className="flex size-10 shrink-0 items-center justify-center">
-                    <Logo className="size-8 text-foreground" />
-                  </div>
-
-                  <WordMark className="h-5 w-auto object-contain text-foreground" />
-                </div>
-              </div>
-              {isPending ? (
-                <Skeleton className="capitalize min-w-0 max-w-40 sm:max-w-3 md:max-w-36 lg:max-w-60 xl:max-w-80" />
-              ) : (
-                title && (
-                  <h1 className="capitalize min-w-0 max-w-40 sm:max-w-3 md:max-w-36 lg:max-w-60 xl:max-w-80 truncate text-sm font-semibold pr-2.5 hidden md:block">
-                    {title}
-                  </h1>
-                )
-              )}
-
-              <span className="shrink-0 rounded-md bg-primary/20 dark:bg-primary/70 px-2 py-0.5 text-xs text-primary dark:text-foreground/70 hidden sm:block">
-                {selectedDocumentIds.length}{" "}
-                {selectedDocumentIds.length === 1 ? "document" : "documents"} selected
-              </span>
+      <SidebarInset className="skim-main-panel flex min-h-0 flex-col overflow-hidden">
+        <header className="skim-topbar">
+          <div className="skim-topbar-left">
+            <SidebarTrigger className="size-9 rounded-xl text-muted-foreground hover:bg-muted hover:text-foreground" aria-label="Toggle navigation" />
+            <button type="button" onClick={() => navigate("/dashboard")} className="skim-mobile-brand" aria-label="Go to Skim dashboard">
+              <Logo />
+              <WordMark className="h-[17px] w-auto text-foreground" />
+            </button>
+            <div className="hidden min-w-0 flex-col md:flex">
+              <span className="skim-topbar-kicker">{conversationId ? "Document conversation" : "Knowledge workspace"}</span>
+              {isPending && conversationId ? <Skeleton className="h-4 w-36 rounded-md" /> : <h1 className="skim-topbar-title">{title}</h1>}
             </div>
           </div>
-
-          <ThemeToggle />
+          <div className="skim-topbar-right">
+            <div className="skim-topbar-status">
+              <span className="skim-topbar-status-dot" />
+              <span>{selectedDocumentIds.length ? selectedDocumentIds.length + " source" + (selectedDocumentIds.length === 1 ? "" : "s") + " selected" : "Ready for your documents"}</span>
+            </div>
+            <ThemeToggle />
+          </div>
         </header>
-
-        <main className="min-h-0 flex flex-1 justify-center overflow-hidden">
+        <main className="skim-route-content">
           <Outlet />
         </main>
       </SidebarInset>
@@ -69,12 +53,10 @@ const DashboardLayoutContent = () => {
   );
 };
 
-const DashboardLayout = () => {
-  return (
-    <DashboardWorkspaceProvider>
-      <DashboardLayoutContent />
-    </DashboardWorkspaceProvider>
-  );
-};
+const DashboardLayout = () => (
+  <DashboardWorkspaceProvider>
+    <DashboardLayoutContent />
+  </DashboardWorkspaceProvider>
+);
 
 export default DashboardLayout;

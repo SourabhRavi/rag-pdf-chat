@@ -11,80 +11,46 @@ const DocumentList = () => {
   const { isDocumentSelected, toggleDocumentSelection } = useDashboardWorkspace();
 
   if (isPending) {
-    return (
-      <div className="space-y-2 px-2">
-        <Skeleton className="h-12 w-full" />
-        <Skeleton className="h-12 w-full" />
-        <Skeleton className="h-12 w-full" />
-      </div>
-    );
+    return <div className="space-y-2 px-2"><Skeleton className="h-10 w-full rounded-lg" /><Skeleton className="h-10 w-full rounded-lg" /><Skeleton className="h-10 w-full rounded-lg" /></div>;
   }
-
-  if (isError) {
-    return <p className="px-2 text-xs text-destructive">Failed to load documents.</p>;
-  }
-
+  if (isError) return <p className="px-2 py-2 text-[10px] text-destructive">Documents couldn’t be loaded.</p>;
   if (documents.length === 0) {
-    return <p className="pr-2 text-xs text-muted-foreground">No documents yet.</p>;
+    return <div className="px-2 py-4 text-center"><FileText className="mx-auto size-4 text-muted-foreground/55" /><p className="mt-2 text-[10px] text-muted-foreground">Upload a PDF to build your library.</p></div>;
   }
 
   return (
     <SidebarMenu className="flex flex-col gap-1">
       {documents.map((document) => {
         const selected = isDocumentSelected(document.documentId);
-
         return (
-          <SidebarMenuItem key={document.documentId} className="min-h-10">
+          <SidebarMenuItem key={document.documentId}>
             <div
-              className={cn(
-                "flex w-full items-center gap-2 rounded-md px-2 py-2 transition-colors",
-                "hover:bg-accent hover:text-accent-foreground",
-                selected &&
-                  "bg-primary/15 text-primary dark:bg-primary/40 hover:bg-primary/25 dark:hover:bg-primary/60",
-              )}
+              role="button"
+              tabIndex={0}
+              aria-pressed={selected}
+              data-selected={selected}
+              className={cn("skim-sidebar-document")}
               onClick={() => toggleDocumentSelection(document.documentId)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  toggleDocumentSelection(document.documentId);
+                }
+              }}
             >
-              <div className="flex min-w-0 flex-1 items-center gap-2">
-                <Checkbox
-                  checked={selected}
-                  onCheckedChange={() => toggleDocumentSelection(document.documentId)}
-                  onClick={(event) => event.stopPropagation()}
-                  aria-label={`Select ${document.fileName}`}
-                />
-
-                <FileText
-                  className={cn(
-                    "size-4 shrink-0 transition-colors",
-                    selected ? "text-primary dark:text-foreground" : "text-muted-foreground",
-                  )}
-                  strokeWidth={selected ? 2.5 : 2}
-                />
-
-                <div className="min-w-0 flex-1">
-                  <p
-                    className={cn(
-                      "truncate text-sm transition-colors",
-                      selected && "font-medium text-primary dark:text-foreground",
-                    )}
-                  >
-                    {document.fileName}
-                  </p>
-
-                  <p className="text-[11px] text-muted-foreground">
-                    {new Date(document.uploadedAt).toLocaleDateString()}
-                  </p>
-                </div>
-              </div>
-
-              {/* later add delete in popover */}
-              {/* <button
-                type="button"
+              <Checkbox
+                checked={selected}
+                onCheckedChange={() => toggleDocumentSelection(document.documentId)}
                 onClick={(event) => event.stopPropagation()}
-                aria-label={`More options for ${document.fileName}`}
-                className="flex size-10 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
-              >
-                <MoreHorizontal className="size-4" />
-              </button> */}
+                aria-label={(selected ? "Deselect " : "Select ") + document.fileName}
+              />
+              <FileText className={cn("size-3.5 shrink-0", selected ? "text-primary" : "text-muted-foreground")} />
+              <div className="min-w-0 flex-1">
+                <p className="skim-sidebar-document-name">{document.fileName}</p>
+                <p className="skim-sidebar-document-date">
+                  {new Date(document.uploadedAt).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
+                </p>
+              </div>
             </div>
           </SidebarMenuItem>
         );
