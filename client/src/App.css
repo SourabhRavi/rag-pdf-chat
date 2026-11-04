@@ -269,3 +269,11 @@ button, a, input, textarea { -webkit-tap-highlight-color: transparent; }
 @media (prefers-reduced-motion: reduce) {
   .skim-auth-shell * { transition-duration: .01ms !important; }
 }
+
+
+/* Match the desktop sidebar threshold used by SidebarProvider. */
+@media (min-width: 900px) {
+  .skim-sidebar-mobile-trigger {
+    display: none !important;
+  }
+}
