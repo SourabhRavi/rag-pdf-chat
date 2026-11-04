@@ -120,6 +120,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             </>
           )}
         </SidebarGroup>
+      </SidebarContent>
+
       <SidebarFooter className="skim-sidebar-footer">
         <div className="mb-1 flex items-center gap-2 px-1 text-[9px] font-semibold uppercase tracking-[0.14em] text-muted-foreground group-data-[collapsible=icon]:hidden">
           <Activity className="size-3.5 text-primary" />Your daily workspace
