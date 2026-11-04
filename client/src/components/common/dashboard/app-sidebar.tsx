@@ -57,8 +57,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarGroup className="skim-sidebar-group skim-sidebar-group-documents">
           <div className="skim-sidebar-group-heading">
             <SidebarGroupLabel><Files className="mr-1.5 size-3.5" />Documents</SidebarGroupLabel>
-            <DocumentUpload variant="outline" size="xs" className="skim-upload-inline">
-              <Upload className="size-3" />Upload
+            <DocumentUpload
+              variant="outline"
+              size="xs"
+              className="skim-upload-inline"
+              title="Upload a PDF"
+              aria-label="Upload a PDF"
+            >
+              <Upload className="size-3.5" />
+              <span>Upload</span>
             </DocumentUpload>
           </div>
           <div className="skim-sidebar-scroll"><DocumentList /></div>

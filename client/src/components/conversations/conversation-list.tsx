@@ -1,5 +1,9 @@
-import { MessageSquareText } from "lucide-react";
-import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
+import { MessageSquareText, AlertCircle } from "lucide-react";
+import {
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from "@/components/ui/sidebar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useConversations } from "@/hooks/use-conversations";
 import { useNavigate, useParams } from "react-router-dom";
@@ -11,11 +15,46 @@ const ConversationList = () => {
   const navigate = useNavigate();
 
   if (isPending) {
-    return <div className="space-y-2 px-2"><Skeleton className="h-9 w-full rounded-lg" /><Skeleton className="h-9 w-full rounded-lg" /><Skeleton className="h-9 w-full rounded-lg" /></div>;
+    return (
+      <SidebarMenu className="skim-conversation-list">
+        {[0, 1, 2].map((item) => (
+          <SidebarMenuItem key={item}>
+            <SidebarMenuButton disabled className="skim-conversation-button">
+              <Skeleton className="size-4 shrink-0 rounded" />
+              <span className="min-w-0 flex-1">
+                <Skeleton className="h-3 w-28 rounded" />
+              </span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        ))}
+      </SidebarMenu>
+    );
   }
-  if (isError) return <p className="px-2 py-2 text-[10px] text-destructive">Couldn’t load conversations.</p>;
+
+  if (isError) {
+    return (
+      <SidebarMenu className="skim-conversation-list">
+        <SidebarMenuItem>
+          <SidebarMenuButton disabled tooltip="Conversations couldn't be loaded">
+            <AlertCircle className="size-4 shrink-0" />
+            <span>Unavailable</span>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      </SidebarMenu>
+    );
+  }
+
   if (conversations.length === 0) {
-    return <div className="px-2 py-4 text-center"><MessageSquareText className="mx-auto size-4 text-muted-foreground/55" /><p className="mt-2 text-[10px] text-muted-foreground">Your chats will appear here.</p></div>;
+    return (
+      <SidebarMenu className="skim-conversation-list">
+        <SidebarMenuItem>
+          <SidebarMenuButton disabled tooltip="Your chats will appear here">
+            <MessageSquareText className="size-4 shrink-0" />
+            <span>No conversations yet</span>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      </SidebarMenu>
+    );
   }
 
   return (
@@ -25,11 +64,16 @@ const ConversationList = () => {
           <SidebarMenuButton
             tooltip={conversation.title}
             isActive={activeConversationId === conversation.conversationId}
-            className={cn("skim-conversation-button", activeConversationId === conversation.conversationId && "font-semibold")}
+            className={cn(
+              "skim-conversation-button",
+              activeConversationId === conversation.conversationId && "font-semibold",
+            )}
             onClick={() => navigate("/conversation/" + conversation.conversationId)}
           >
             <MessageSquareText className="size-3.5 shrink-0" />
-            <span className="min-w-0 flex-1 truncate text-left capitalize">{conversation.title}</span>
+            <span className="min-w-0 flex-1 truncate text-left capitalize">
+              {conversation.title}
+            </span>
           </SidebarMenuButton>
         </SidebarMenuItem>
       ))}

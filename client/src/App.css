@@ -277,3 +277,216 @@ button, a, input, textarea { -webkit-tap-highlight-color: transparent; }
     display: none !important;
   }
 }
+
+
+/* Tablet icon rail: use the same compact, centered primitives as shadcn. */
+.group[data-collapsible="icon"] .skim-sidebar-header {
+  align-items: center;
+  gap: 13px;
+  padding: 14px 8px 12px;
+}
+
+.group[data-collapsible="icon"] .skim-sidebar-header > div:first-child {
+  width: 100%;
+  justify-content: center;
+}
+
+.group[data-collapsible="icon"] .skim-brand {
+  width: 36px;
+  height: 36px;
+  justify-content: center;
+}
+
+.group[data-collapsible="icon"] .skim-brand-mark {
+  width: 36px;
+  height: 36px;
+  flex-basis: 36px;
+}
+
+.group[data-collapsible="icon"] .skim-sidebar-header [data-slot="sidebar-menu"],
+.group[data-collapsible="icon"] .skim-sidebar-header [data-slot="sidebar-menu-item"] {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
+
+.group[data-collapsible="icon"] .skim-sidebar .skim-new-chat-button {
+  display: flex;
+  width: 36px !important;
+  min-width: 36px !important;
+  max-width: 36px !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  max-height: 36px !important;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-inline: auto;
+  padding: 0 !important;
+  border-radius: 11px !important;
+}
+
+.group[data-collapsible="icon"] .skim-sidebar .skim-new-chat-button > span {
+  display: none !important;
+}
+
+.group[data-collapsible="icon"] .skim-sidebar .skim-new-chat-button > svg {
+  display: block;
+  width: 17px;
+  height: 17px;
+  color: #fff !important;
+  stroke-width: 2.5;
+}
+
+.group[data-collapsible="icon"] .skim-sidebar-content {
+  align-items: stretch;
+  gap: 10px;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  padding: 0 8px 10px;
+}
+
+.group[data-collapsible="icon"] .skim-sidebar-group {
+  width: 100%;
+  min-width: 0;
+  flex: 0 0 auto;
+}
+
+.group[data-collapsible="icon"] .skim-sidebar-group-conversations {
+  overflow: visible;
+}
+
+.group[data-collapsible="icon"] .skim-sidebar-group-conversations .skim-sidebar-group-heading {
+  display: none;
+}
+
+.group[data-collapsible="icon"] .skim-sidebar-group-documents {
+  height: auto;
+  min-height: 0;
+  border-top: 1px solid var(--sidebar-border);
+  padding-top: 9px !important;
+}
+
+.group[data-collapsible="icon"] .skim-sidebar-group-documents .skim-sidebar-group-heading {
+  display: flex;
+  min-height: 0;
+  justify-content: center;
+  padding: 0 0 6px;
+}
+
+.group[data-collapsible="icon"] .skim-sidebar-group-documents .skim-sidebar-group-heading [data-slot="sidebar-group-label"] {
+  display: none;
+}
+
+.group[data-collapsible="icon"] .skim-sidebar-group-documents .skim-upload-inline {
+  display: flex;
+  width: 36px !important;
+  min-width: 36px !important;
+  max-width: 36px !important;
+  height: 32px !important;
+  min-height: 32px !important;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin: 0 auto;
+  padding: 0 !important;
+  border-radius: 10px !important;
+  font-size: 0 !important;
+}
+
+.group[data-collapsible="icon"] .skim-sidebar-group-documents .skim-upload-inline > span {
+  display: none !important;
+}
+
+.group[data-collapsible="icon"] .skim-sidebar-scroll {
+  overflow: visible;
+}
+
+.skim-document-list {
+  gap: 3px;
+}
+
+.skim-document-button {
+  min-height: 43px !important;
+  height: auto !important;
+  gap: 9px !important;
+  border: 1px solid transparent;
+  border-radius: 10px !important;
+  padding: 7px 9px !important;
+}
+
+.skim-document-button[data-active="true"] {
+  border-color: color-mix(in srgb, var(--primary) 14%, var(--border));
+}
+
+.skim-document-details {
+  display: block;
+  overflow: hidden;
+  min-width: 0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.skim-document-icon {
+  color: var(--muted-foreground);
+}
+
+.skim-document-button[data-active="true"] .skim-document-icon {
+  color: var(--primary);
+}
+
+.group[data-collapsible="icon"] .skim-sidebar .skim-document-list [data-slot="sidebar-menu-item"] {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
+
+.group[data-collapsible="icon"] .skim-sidebar .skim-document-button {
+  display: flex;
+  width: 36px !important;
+  min-width: 36px !important;
+  max-width: 36px !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  max-height: 36px !important;
+  align-items: center;
+  justify-content: center;
+  gap: 0 !important;
+  margin-inline: auto;
+  padding: 0 !important;
+  border: 1px solid transparent;
+  border-radius: 11px !important;
+}
+
+.group[data-collapsible="icon"] .skim-sidebar .skim-document-button[data-active="true"] {
+  border-color: color-mix(in srgb, var(--primary) 17%, var(--border));
+  background: var(--sidebar-accent);
+}
+
+.group[data-collapsible="icon"] .skim-sidebar .skim-document-details,
+.group[data-collapsible="icon"] .skim-sidebar .skim-document-selected-mark {
+  display: none !important;
+}
+
+.group[data-collapsible="icon"] .skim-sidebar .skim-document-icon {
+  width: 16px;
+  height: 16px;
+  color: var(--primary);
+}
+
+.group[data-collapsible="icon"] .skim-sidebar-footer {
+  display: none !important;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .skim-sidebar .skim-new-chat-button,
+  .skim-sidebar .skim-upload-inline,
+  .skim-sidebar .skim-document-button {
+    transition:
+      width 220ms cubic-bezier(.22, 1, .36, 1),
+      height 220ms cubic-bezier(.22, 1, .36, 1),
+      padding 180ms ease,
+      background-color 150ms ease,
+      border-color 150ms ease;
+  }
+}
