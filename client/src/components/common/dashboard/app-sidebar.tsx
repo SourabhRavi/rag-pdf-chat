@@ -2,7 +2,7 @@ import * as React from "react";
 import { Plus, Upload, Activity, Files, MessageSquareText } from "lucide-react";
 import {
   Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupLabel,
-  SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem,
+  SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar,
 } from "@/components/ui/sidebar";
 import DocumentList from "@/components/documents/document-list";
 import ConversationList from "@/components/conversations/conversation-list";
@@ -17,6 +17,8 @@ import WordMark from "@/assets/logo/skim-wordmark-svg.svg?react";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const navigate = useNavigate();
+  const { state, setOpen } = useSidebar();
+  const isCollapsed = state === "collapsed";
   const { mutate: createConversation, isPending } = useCreateConversation();
 
   const handleNewChatClick = () => {
@@ -48,27 +50,69 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
       <SidebarContent className="skim-sidebar-content">
         <SidebarGroup className="skim-sidebar-group skim-sidebar-group-conversations">
-          <div className="skim-sidebar-group-heading">
-            <SidebarGroupLabel><MessageSquareText className="mr-1.5 size-3.5" />Conversations</SidebarGroupLabel>
+          <div className="skim-sidebar-expanded-content">
+            <div className="skim-sidebar-group-heading">
+              <SidebarGroupLabel>
+                <MessageSquareText className="mr-1.5 size-3.5" />
+                Conversations
+              </SidebarGroupLabel>
+            </div>
+            <div className="skim-sidebar-scroll">
+              <ConversationList />
+            </div>
           </div>
-          <div className="skim-sidebar-scroll"><ConversationList /></div>
+
+          <SidebarMenu className="skim-collapsed-section-action">
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                tooltip="Conversations"
+                aria-label="Open conversations"
+                className="skim-rail-section-button"
+                onClick={() => setOpen(true)}
+              >
+                <MessageSquareText className="size-4" />
+                <span className="sr-only">Conversations</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
         </SidebarGroup>
 
         <SidebarGroup className="skim-sidebar-group skim-sidebar-group-documents">
-          <div className="skim-sidebar-group-heading">
-            <SidebarGroupLabel><Files className="mr-1.5 size-3.5" />Documents</SidebarGroupLabel>
-            <DocumentUpload
-              variant="outline"
-              size="xs"
-              className="skim-upload-inline"
-              title="Upload a PDF"
-              aria-label="Upload a PDF"
-            >
-              <Upload className="size-3.5" />
-              <span>Upload</span>
-            </DocumentUpload>
+          <div className="skim-sidebar-expanded-content">
+            <div className="skim-sidebar-group-heading">
+              <SidebarGroupLabel>
+                <Files className="mr-1.5 size-3.5" />
+                Documents
+              </SidebarGroupLabel>
+              <DocumentUpload
+                variant="outline"
+                size="xs"
+                className="skim-upload-inline"
+                title="Upload a PDF"
+                aria-label="Upload a PDF"
+              >
+                <Upload className="size-3.5" />
+                <span>Upload</span>
+              </DocumentUpload>
+            </div>
+            <div className="skim-sidebar-scroll">
+              <DocumentList />
+            </div>
           </div>
-          <div className="skim-sidebar-scroll"><DocumentList /></div>
+
+          <SidebarMenu className="skim-collapsed-section-action">
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                tooltip="Documents"
+                aria-label="Open documents"
+                className="skim-rail-section-button"
+                onClick={() => setOpen(true)}
+              >
+                <Files className="size-4" />
+                <span className="sr-only">Documents</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
 

@@ -490,3 +490,81 @@ button, a, input, textarea { -webkit-tap-highlight-color: transparent; }
       border-color 150ms ease;
   }
 }
+
+
+/* Collapsed rail: one section entry per list, never one icon per item. */
+.skim-collapsed-section-action {
+  display: none !important;
+}
+
+.group[data-collapsible="icon"] .skim-sidebar .skim-sidebar-expanded-content {
+  display: none !important;
+}
+
+.group[data-collapsible="icon"] .skim-sidebar .skim-collapsed-section-action {
+  display: flex !important;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.group[data-collapsible="icon"] .skim-sidebar .skim-collapsed-section-action [data-slot="sidebar-menu-item"] {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
+
+.group[data-collapsible="icon"] .skim-sidebar .skim-rail-section-button {
+  display: flex;
+  width: 36px !important;
+  min-width: 36px !important;
+  max-width: 36px !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  max-height: 36px !important;
+  align-items: center;
+  justify-content: center;
+  gap: 0 !important;
+  margin-inline: auto;
+  padding: 0 !important;
+  border: 1px solid var(--sidebar-border);
+  border-radius: 11px !important;
+  background: var(--sidebar);
+  color: var(--sidebar-foreground);
+}
+
+.group[data-collapsible="icon"] .skim-sidebar .skim-rail-section-button:hover {
+  border-color: color-mix(in srgb, var(--primary) 22%, var(--sidebar-border));
+  background: var(--sidebar-accent);
+  color: var(--primary);
+}
+
+.group[data-collapsible="icon"] .skim-sidebar .skim-rail-section-button > svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+  margin: 0;
+  color: var(--primary);
+}
+
+.group[data-collapsible="icon"] .skim-sidebar .skim-sidebar-group-conversations,
+.group[data-collapsible="icon"] .skim-sidebar .skim-sidebar-group-documents {
+  flex: 0 0 auto;
+  width: 100%;
+  min-height: 0;
+  border: 0;
+  padding: 0 !important;
+}
+
+.group[data-collapsible="icon"] .skim-sidebar .skim-sidebar-group-documents {
+  border-top: 1px solid var(--sidebar-border);
+  padding-top: 9px !important;
+}
+
+.group[data-collapsible="icon"] .skim-sidebar .skim-sidebar-content {
+  gap: 9px;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+}
