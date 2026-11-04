@@ -17,8 +17,7 @@ import WordMark from "@/assets/logo/skim-wordmark-svg.svg?react";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const navigate = useNavigate();
-  const { state, setOpen } = useSidebar();
-  const isCollapsed = state === "collapsed";
+  const { setOpen } = useSidebar();
   const { mutate: createConversation, isPending } = useCreateConversation();
 
   const handleNewChatClick = () => {

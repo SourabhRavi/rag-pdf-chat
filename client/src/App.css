@@ -497,11 +497,11 @@ button, a, input, textarea { -webkit-tap-highlight-color: transparent; }
   display: none !important;
 }
 
-.group[data-collapsible="icon"] .skim-sidebar .skim-sidebar-expanded-content {
+.skim-sidebar.group[data-collapsible="icon"] .skim-sidebar-expanded-content {
   display: none !important;
 }
 
-.group[data-collapsible="icon"] .skim-sidebar .skim-collapsed-section-action {
+.skim-sidebar.group[data-collapsible="icon"] .skim-collapsed-section-action {
   display: flex !important;
   width: 100%;
   align-items: center;
@@ -509,13 +509,13 @@ button, a, input, textarea { -webkit-tap-highlight-color: transparent; }
   padding: 0;
 }
 
-.group[data-collapsible="icon"] .skim-sidebar .skim-collapsed-section-action [data-slot="sidebar-menu-item"] {
+.skim-sidebar.group[data-collapsible="icon"] .skim-collapsed-section-action [data-slot="sidebar-menu-item"] {
   display: flex;
   width: 100%;
   justify-content: center;
 }
 
-.group[data-collapsible="icon"] .skim-sidebar .skim-rail-section-button {
+.skim-sidebar.group[data-collapsible="icon"] .skim-rail-section-button {
   display: flex;
   width: 36px !important;
   min-width: 36px !important;
@@ -534,13 +534,13 @@ button, a, input, textarea { -webkit-tap-highlight-color: transparent; }
   color: var(--sidebar-foreground);
 }
 
-.group[data-collapsible="icon"] .skim-sidebar .skim-rail-section-button:hover {
+.skim-sidebar.group[data-collapsible="icon"] .skim-rail-section-button:hover {
   border-color: color-mix(in srgb, var(--primary) 22%, var(--sidebar-border));
   background: var(--sidebar-accent);
   color: var(--primary);
 }
 
-.group[data-collapsible="icon"] .skim-sidebar .skim-rail-section-button > svg {
+.skim-sidebar.group[data-collapsible="icon"] .skim-rail-section-button > svg {
   display: block;
   width: 16px;
   height: 16px;
@@ -549,8 +549,8 @@ button, a, input, textarea { -webkit-tap-highlight-color: transparent; }
   color: var(--primary);
 }
 
-.group[data-collapsible="icon"] .skim-sidebar .skim-sidebar-group-conversations,
-.group[data-collapsible="icon"] .skim-sidebar .skim-sidebar-group-documents {
+.skim-sidebar.group[data-collapsible="icon"] .skim-sidebar-group-conversations,
+.skim-sidebar.group[data-collapsible="icon"] .skim-sidebar-group-documents {
   flex: 0 0 auto;
   width: 100%;
   min-height: 0;
@@ -558,12 +558,12 @@ button, a, input, textarea { -webkit-tap-highlight-color: transparent; }
   padding: 0 !important;
 }
 
-.group[data-collapsible="icon"] .skim-sidebar .skim-sidebar-group-documents {
+.skim-sidebar.group[data-collapsible="icon"] .skim-sidebar-group-documents {
   border-top: 1px solid var(--sidebar-border);
   padding-top: 9px !important;
 }
 
-.group[data-collapsible="icon"] .skim-sidebar .skim-sidebar-content {
+.skim-sidebar.group[data-collapsible="icon"] .skim-sidebar-content {
   gap: 9px;
   overflow-x: hidden !important;
   overflow-y: auto !important;
