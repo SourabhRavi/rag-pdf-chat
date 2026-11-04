@@ -27,7 +27,7 @@ const DashboardLayoutContent = () => {
       <SidebarInset className="skim-main-panel flex min-h-0 flex-col overflow-hidden">
         <header className="skim-topbar">
           <div className="skim-topbar-left">
-            <SidebarTrigger className="size-9 rounded-xl text-muted-foreground hover:bg-muted hover:text-foreground" aria-label="Toggle navigation" />
+            <SidebarTrigger className="size-9 rounded-xl text-muted-foreground hover:bg-muted hover:text-foreground lg:hidden" aria-label="Toggle navigation" />
             <button type="button" onClick={() => navigate("/dashboard")} className="skim-mobile-brand" aria-label="Go to Skim dashboard">
               <Logo />
               <WordMark className="h-[17px] w-auto text-foreground" />
