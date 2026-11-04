@@ -27,7 +27,6 @@ const SIDEBAR_WIDTH = "16rem";
 const SIDEBAR_WIDTH_MOBILE = "18rem";
 const SIDEBAR_WIDTH_ICON = "3rem";
 const SIDEBAR_KEYBOARD_SHORTCUT = "b";
-const SIDEBAR_DESKTOP_BREAKPOINT = 900;
 
 type SidebarContextProps = {
   state: "expanded" | "collapsed";
@@ -64,19 +63,7 @@ function SidebarProvider({
   onOpenChange?: (open: boolean) => void;
 }) {
   const isMobile = useIsMobile();
-  const [isDesktop, setIsDesktop] = React.useState(
-    () => typeof window !== "undefined" && window.innerWidth >= SIDEBAR_DESKTOP_BREAKPOINT,
-  );
   const [openMobile, setOpenMobile] = React.useState(false);
-
-  React.useEffect(() => {
-    const mediaQuery = window.matchMedia(`(min-width: ${SIDEBAR_DESKTOP_BREAKPOINT}px)`);
-    const handleChange = () => setIsDesktop(mediaQuery.matches);
-
-    handleChange();
-    mediaQuery.addEventListener("change", handleChange);
-    return () => mediaQuery.removeEventListener("change", handleChange);
-  }, []);
 
   // This is the internal state of the sidebar.
   // We use openProp and setOpenProp for control from outside the component.
@@ -84,8 +71,6 @@ function SidebarProvider({
   const open = openProp ?? _open;
   const setOpen = React.useCallback(
     (value: boolean | ((value: boolean) => boolean)) => {
-      if (isDesktop) return;
-
       const openState = typeof value === "function" ? value(open) : value;
       if (setOpenProp) {
         setOpenProp(openState);
@@ -96,19 +81,18 @@ function SidebarProvider({
       // This sets the cookie to keep the sidebar state.
       document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`;
     },
-    [setOpenProp, open, isDesktop],
+    [setOpenProp, open],
   );
 
   // Helper to toggle the sidebar.
   const toggleSidebar = React.useCallback(() => {
-    if (isDesktop) return;
     return isMobile ? setOpenMobile((open) => !open) : setOpen((open) => !open);
-  }, [isDesktop, isMobile, setOpen, setOpenMobile]);
+  }, [isMobile, setOpen, setOpenMobile]);
 
   // Adds a keyboard shortcut to toggle the sidebar.
   React.useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (!isDesktop && event.key === SIDEBAR_KEYBOARD_SHORTCUT && (event.metaKey || event.ctrlKey)) {
+      if (!isMobile && event.key === SIDEBAR_KEYBOARD_SHORTCUT && (event.metaKey || event.ctrlKey)) {
         event.preventDefault();
         toggleSidebar();
       }
@@ -116,10 +100,9 @@ function SidebarProvider({
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [toggleSidebar, isDesktop]);
+  }, [toggleSidebar, isMobile]);
 
-  // Keep the full sidebar expanded on desktop, regardless of the saved tablet state.
-  const effectiveOpen = isDesktop ? true : open;
+  const effectiveOpen = open;
 
   // We add a state so that we can do data-state="expanded" or "collapsed".
   // This makes it easier to style the sidebar with Tailwind classes.

@@ -29,7 +29,7 @@ button, a, input, textarea { -webkit-tap-highlight-color: transparent; }
 .skim-app-shell { height: 100svh; min-height: 0; width: 100%; gap: 0; overflow: hidden; background: radial-gradient(ellipse at 6% 0%, rgb(117 112 221 / 9%), transparent 33rem), var(--skim-canvas); }
 .skim-sidebar { --sidebar-width: 17.5rem; --sidebar-width-icon: 4.35rem; }
 .skim-sidebar [data-slot="sidebar-inner"] { overflow: hidden; border: 1px solid var(--sidebar-border); border-radius: 19px; background: var(--sidebar); box-shadow: 0 8px 28px rgb(29 31 57 / 5%); }
-.skim-main-panel { min-width: 0; min-height: 0; height: calc(100svh - 16px); margin: 8px 8px 8px 0; overflow: hidden; border: 1px solid var(--border); border-radius: 22px; background: var(--background); box-shadow: var(--skim-shadow-soft); }
+.skim-main-panel { min-width: 0; min-height: 0; height: calc(100svh - 16px); margin-top: 8px; margin-right: 8px; margin-bottom: 8px; overflow: hidden; border: 1px solid var(--border); border-radius: 22px; background: var(--background); box-shadow: var(--skim-shadow-soft); }
 .skim-sidebar-header { gap: 18px; padding: 20px 15px 16px; }
 .skim-brand { display: flex; min-width: 0; align-items: center; gap: 9px; border-radius: 12px; padding: 1px; text-align: left; }
 .skim-brand-mark { display: grid; width: 39px; height: 39px; flex: 0 0 39px; place-items: center; border: 1px solid color-mix(in srgb, var(--primary) 13%, var(--border)); border-radius: 12px; background: linear-gradient(145deg, #fff, #f1f0ff); box-shadow: 0 3px 10px rgb(44 42 92 / 7%); }
@@ -197,7 +197,6 @@ button, a, input, textarea { -webkit-tap-highlight-color: transparent; }
 @keyframes skim-rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
 @media (max-width: 1024px) {
-  .skim-sidebar { --sidebar-width: 16rem; }
   .skim-hero { grid-template-columns: minmax(0, 1fr) 215px; }
   .skim-hero-visual { min-height: 175px; }
   .skim-hero-orbit { width: 170px; height: 170px; }
@@ -205,11 +204,20 @@ button, a, input, textarea { -webkit-tap-highlight-color: transparent; }
 }
 @media (max-width: 800px) {
   .skim-app-shell { gap: 0; }
-  .skim-main-panel { height: 100svh; margin: 0; border: 0; border-radius: 0; box-shadow: none; }
   .skim-mobile-brand { display: flex; }
   .skim-topbar { min-height: 62px; padding-inline: 13px; }
   .skim-topbar-status { display: none; }
   .skim-dashboard-page { padding: 20px 16px 25px; }
+}
+
+@media (max-width: 767px) {
+  .skim-main-panel {
+    height: 100svh;
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
 }
 @media (max-width: 680px) {
   .skim-dashboard-heading { align-items: flex-start; flex-direction: column; gap: 14px; }
@@ -272,10 +280,70 @@ button, a, input, textarea { -webkit-tap-highlight-color: transparent; }
 
 
 /* Match the desktop sidebar threshold used by SidebarProvider. */
-@media (min-width: 900px) {
-  .skim-sidebar-mobile-trigger {
-    display: none !important;
+/* Keep the shadcn inset margin responsible for the sidebar-to-panel gutter. */
+@media (min-width: 768px) {
+  .skim-main-panel {
+    margin-top: 8px;
+    margin-right: 8px;
+    margin-bottom: 8px;
   }
+}
+
+/* First-visit mobile sidebar coachmark. */
+.skim-sidebar-trigger-wrap {
+  position: relative;
+  display: inline-flex;
+  flex: 0 0 auto;
+}
+
+.skim-mobile-sidebar-hint {
+  position: absolute;
+  z-index: 60;
+  top: calc(100% + 12px);
+  left: 0;
+  display: flex;
+  width: min(286px, calc(100vw - 32px));
+  align-items: flex-start;
+  gap: 11px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--card);
+  padding: 13px 12px;
+  color: var(--foreground);
+  font-size: 11px;
+  line-height: 1.55;
+  box-shadow: 0 16px 42px rgb(18 20 44 / 16%);
+  animation: skim-hint-arrive 240ms cubic-bezier(.2,.75,.25,1) both;
+}
+
+.skim-mobile-sidebar-hint-arrow {
+  position: absolute;
+  top: -6px;
+  left: 13px;
+  width: 11px;
+  height: 11px;
+  border-top: 1px solid var(--border);
+  border-left: 1px solid var(--border);
+  background: var(--card);
+  transform: rotate(45deg);
+}
+
+.skim-mobile-sidebar-hint-dismiss {
+  flex: 0 0 auto;
+  margin-left: auto;
+  color: var(--primary);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.skim-mobile-sidebar-hint-dismiss:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+@keyframes skim-hint-arrive {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 
